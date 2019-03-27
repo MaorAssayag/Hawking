@@ -1,4 +1,6 @@
-![Screenshot](screenshot.png)
+
+<img src="https://github.com/MaorAssayag/Hawking/blob/master/Android%20Studio/app/src/main/ic_hawking-web.png" width="150">
+
 # Hawking
 ## A real-time communication system for deaf and blind people
 
