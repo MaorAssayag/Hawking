@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorMyMessage" format="reference|color" />
+    <attr name="colorTheirMessage" format="reference|color" />
+    <attr name="colorPopUpText" format="reference|color" />
+    <attr name="colorMessageInput" format="reference|color" />
+    <attr name="colorHawkingTitle" format="reference|color" />
+    <attr name="colorPopUpBackground" format="reference|color" />
+    <attr name="colorPulseView" format="reference|color" />
+</resources>

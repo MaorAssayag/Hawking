@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:title="@string/title_presave_subscreen">
+    <PreferenceCategory android:title="@string/pref_title_subscreen">
+
+        <Preference
+            android:selectable="false"
+            android:summary="@string/summary_presave_button"/>
+
+        <EditTextPreference
+            android:key="@string/key_presave"
+            android:icon="@drawable/ic_set"
+            android:title="@string/title_presave_button"
+            android:defaultValue="@string/title_presave_button_content"
+            android:dialogTitle="@string/title_presave_button_dialog"/>
+
+        <EditTextPreference
+            android:key="pref_presave_1"
+            android:summary="@string/summary_presave_1"
+            android:title="@string/title_presave_1"
+            android:dialogTitle="@string/title_presave_dialog"/>
+
+        <EditTextPreference
+            android:key="pref_presave_2"
+            android:summary="@string/summary_presave_2"
+            android:title="@string/title_presave_2"
+            android:dialogTitle="@string/title_presave_dialog"/>
+
+        <EditTextPreference
+            android:key="pref_presave_3"
+            android:summary="@string/summary_presave_3"
+            android:title="@string/title_presave_3"
+            android:dialogTitle="@string/title_presave_dialog"/>
+
+        <EditTextPreference
+            android:key="pref_presave_4"
+            android:summary="@string/summary_presave_4"
+            android:title="@string/title_presave_4"
+            android:dialogTitle="@string/title_presave_dialog"/>
+
+        <EditTextPreference
+            android:key="pref_presave_5"
+            android:summary="@string/summary_presave_5"
+            android:title="@string/title_presave_5"
+            android:dialogTitle="@string/title_presave_dialog"/>
+    </PreferenceCategory>
+</PreferenceScreen>

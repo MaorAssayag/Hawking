@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <PreferenceCategory android:title="@string/pref_title_general">
+
+            <!--<Preference-->
+                <!--android:title="@string/pref_title_fontsize"-->
+                <!--android:icon="@drawable/ic_font_size"-->
+                <!--android:selectable="false"/>-->
+
+            <EditTextPreference
+                android:key="key_myname"
+                android:hint="@string/summary_myname"
+                android:defaultValue="@string/app_name_title"
+                android:title="@string/pref_title_myname"
+                android:dialogTitle="@string/pref_title_myname"
+                android:icon="@drawable/ic_person"/>
+
+            <!--<Preference android:title="@string/pref_title_increase"-->
+                <!--android:key="@string/key_increase_font_size"-->
+                <!--android:summary="@string/summary_increase"-->
+                <!--android:icon="@drawable/ic_increase"/>-->
+
+            <!--<Preference android:title="@string/pref_title_decrease"-->
+                <!--android:key="@string/key_decrease_font_size"-->
+                <!--android:summary="@string/summary_decrease"-->
+                <!--android:icon="@drawable/ic_decrease"/>-->
+
+            <CheckBoxPreference android:title="@string/pref_title_bold"
+                android:key="@string/key_bold"
+                android:summary="@string/summary_bold"
+                android:icon="@drawable/ic_bold_text"/>
+
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="@string/key_dark_mode"
+                android:summary="@string/summary_dark_mode"
+                android:title="@string/pref_title_dark_mode"
+                android:icon="@drawable/ic_dark_mode"/>
+
+
+            <Preference
+                android:title="@string/pref_title_fontsize"
+                android:icon="@drawable/ic_font_size"
+                android:layout="@layout/custom_perf"
+                android:selectable="false" />
+
+
+            <org.anasthase.androidseekbarpreference.SeekBarPreference
+                android:defaultValue="20"
+                android:key="@string/key_font_seekbar"
+                app:maxValue="90"
+                app:minValue="14"
+                app:stepValue="4"
+                app:format="%d"/>
+
+        </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_title_stt">
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_stt_enable"
+                android:summary="@string/summary_stt_enable"
+                android:title="@string/title_stt_enable"
+                android:icon="@drawable/ic_stt"/>
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_read_block"
+                android:summary="@string/summary_read_block"
+                android:title="@string/title_read_block"
+                android:icon="@drawable/ic_read_block"/>
+
+            <ListPreference
+                android:key="@string/key_language_stt"
+                android:title="@string/title_language_stt"
+                android:defaultValue="en-US"
+                android:entries="@array/Language"
+                android:entryValues="@array/language_values"
+                android:summary="@string/summary_language_stt"
+                android:icon="@drawable/ic_tts_lang"/>
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="@string/pref_title_tts">
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_tts_enable"
+                android:summary="@string/summary_tts_enable"
+                android:title="@string/title_tts_enable"
+                android:icon="@drawable/megaphone"/>
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_vibrate"
+                android:summary="@string/summary_vibrate"
+                android:title="@string/title_vibrate"
+                android:icon="@drawable/ic_vibrate"/>
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_max_volume"
+                android:summary="@string/summary_max_volume"
+                android:title="@string/title_max_volume"
+                android:icon="@drawable/ic_max_volume"/>
+
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="@string/key_repeat_enable"
+                android:summary="@string/summary_repeat_enable"
+                android:title="@string/title_repeat_enable"
+                android:icon="@drawable/ic_repeat_empty"/>
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_repeat_longpress"
+                android:summary="@string/summary_repeat_longpress"
+                android:title="@string/title_repeat_longpress"
+                android:icon="@drawable/ic_repeat_longpress"/>
+
+            <Preference
+                android:key="pref_presave_subscreen"
+                android:title="@string/title_presave_subscreen"
+                android:summary="@string/summary_presave_subscreen"
+                android:icon="@drawable/ic_presave"/>
+
+            <ListPreference
+                android:key="@string/key_language_tts"
+                android:title="@string/title_language_tts"
+                android:defaultValue="en-US"
+                android:entries="@array/Language"
+                android:entryValues="@array/language_values"
+                android:summary="@string/summary_language_tts"
+                android:icon="@drawable/ic_tts_lang"/>
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="@string/pref_header_about">
+            <Preference
+                android:selectable="false"
+                android:summary="@string/summary_about" />
+
+            <Preference
+                android:summary="1.0"
+                android:title="@string/title_version" />
+
+            <Preference
+                android:key="@string/key_send_feedback"
+                android:summary="@string/summary_support"
+                android:title="@string/title_send_feedback" />
+
+            <!-- preference opens url in browser -->
+            <Preference
+                android:summary="@string/summary_faq"
+                android:title="@string/title_faq">
+                <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="@string/url_faq" />
+            </Preference>
+
+            <Preference android:title="@string/privacy_policy">
+                <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="@string/url_privacy" />
+            </Preference>
+
+            <Preference android:title="@string/title_terms">
+                <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="@string/url_terms" />
+            </Preference>
+        </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,5 @@
+<resources>
+    <integer name="seek_bar_default">6</integer>
+    <integer name="seek_bar_max">10</integer>
+    <integer name="seek_bar_min">3</integer>
+</resources>

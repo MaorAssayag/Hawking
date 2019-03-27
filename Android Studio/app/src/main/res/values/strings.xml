@@ -1,0 +1,172 @@
+<resources>
+    <!-- General -->
+    <string name="app_name" translatable="false">Hawking</string>
+    <string name="app_name_title">Hawking</string>
+    <string name="TypeHint" translatable="false">Type your message</string>
+    <string name="recognize_title">Recognition</string>
+
+    <!-- Settings Activity-->
+    <string name="action_settings" translatable="false">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- General settings pref -->
+    <string name="pref_title_general">General</string>
+    <string name="pref_title_fontsize">Chat text size</string>
+    <string name="key_font_seekbar" translatable="false">key_font_seekbar</string>
+
+    <string name="pref_title_increase">Increase font size in chat</string>
+    <string name="key_increase_font_size" translatable="false">key_increase_font_size</string>
+    <string name="summary_increase">Tap to increase the font size in chat</string>
+
+    <string name="pref_title_decrease">Decrease font size in chat</string>
+    <string name="summary_decrease">Tap to decrease the font size in chat</string>
+    <string name="key_decrease_font_size" translatable="false">key_decrease_font_size</string>
+
+    <string name="pref_title_bold">Bold text</string>
+    <string name="summary_bold">Make the text in chat bold</string>
+    <string name="key_bold" translatable="false">key_bold</string>
+
+    <string name="increase_font"> + Font size increase to </string>
+    <string name="decrease_font"> - Font size decrease to </string>
+    <string name="warning_font">Font size too small !</string>
+
+    <string name="pref_title_myname">Your name</string>
+    <string name="summary_myname">Type your name</string>
+    <string name="key_myname" translatable="false">key_myname</string>
+
+    <string name="pref_title_dark_mode">Night Theme</string>
+    <string name="summary_dark_mode">Change the contrast of text and background</string>
+    <string name="key_dark_mode" translatable="false">key_dark_mode</string>
+
+    <!-- STT settings pref -->
+    <string name="pref_title_stt">Speech to Text</string>
+    <string name="title_stt_enable">STT shortcut</string>
+    <string name="summary_stt_enable">Choose how to start speech-recognition</string>
+    <string name="key_stt_enable" translatable="false">key_stt_enable</string>
+
+    <string name="title_read_block">STT read blocking</string>
+    <string name="summary_read_block">Enable Speech recognition only after the last message has been read</string>
+    <string name="key_read_block" translatable="false">key_read_block</string>
+
+    <string name="title_language_stt">STT Language</string>
+    <string name="summary_language_stt">Choose the recognize speech language</string>
+    <string name="key_language_stt" translatable="false">key_language_stt</string>
+
+    <!-- TTS settings pref -->
+    <string name="pref_title_tts">Text to Speech</string>
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_vibrate">Enable Vibrate</string>
+    <string name="summary_vibrate">Vibrate on each new speech</string>
+    <string name="key_vibrate" translatable="false">key_vibrate</string>
+
+    <string name="title_tts_enable">Enable TTS</string>
+    <string name="summary_tts_enable">Enable Text to Speech</string>
+    <string name="key_tts_enable" translatable="false">key_tts_enable</string>
+
+    <string name="title_max_volume">Max volume adjusting</string>
+    <string name="summary_max_volume">Ensure max volume when speaking your message</string>
+    <string name="key_max_volume" translatable="false">key_max_volume</string>
+
+    <string name="title_repeat_enable">Repeat on Empty</string>
+    <string name="summary_repeat_enable">Repeat the last message when sending empty message</string>
+    <string name="key_repeat_enable" translatable="false">key_repeat_enable</string>
+
+    <string name="title_repeat_longpress">Long-press repeat</string>
+    <string name="summary_repeat_longpress">Repeat the message when long-press it</string>
+    <string name="key_repeat_longpress" translatable="false">key_repeat_longpress</string>
+
+    <string name="title_presave_subscreen">Pre-saved sentences</string>
+    <string name="summary_presave_subscreen">Launch with dedicated keys</string>
+    <string name="title_presave_dialog">Save a new sentence</string>
+
+    <string name="title_language_tts">TTS Language</string>
+    <string name="summary_language_tts">Choose the Text-To-Speak language</string>
+    <string name="key_language_tts" translatable="false">key_language_tts</string>
+
+    <!-- Pre-save Subscreen pref -->
+    <string name="pref_title_subscreen">About pre-save sentences</string>
+    <string name="title_presave_button_current">Current shortcut template</string>
+    <string name="title_presave_button">Set the shortcut template</string>
+    <string name="summary_presave_button">With the template you can use the shortcuts. For e.g.: template "'"a"'" will launch sentence1 when entered "'"a1"'"</string>
+    <string name="title_presave_button_content">a</string>
+    <string name="title_presave_button_dialog">Enter new template in English</string>
+    <string name="key_presave" translatable="false">key_presave</string>
+
+    <string name="title_presave_1">Sentence 1</string>
+    <string name="summary_presave_1">Empty</string>
+    <string name="title_presave_2">Sentence 2</string>
+    <string name="summary_presave_2">Empty</string>
+    <string name="title_presave_3">Sentence 3</string>
+    <string name="summary_presave_3">Empty</string>
+    <string name="title_presave_4">Sentence 4</string>
+    <string name="summary_presave_4">Empty</string>
+    <string name="title_presave_5">Sentence 5</string>
+    <string name="summary_presave_5">Empty</string>
+
+    <string name="no_such_shortcut">No such shortcut</string>
+
+    <!-- About pref -->
+    <string name="pref_header_about">About</string>
+    <string name="summary_about">Hawking was created to help people with struggle to communicate via a braille keyboard.
+        This app is part of a final computer engineering project in ben-gurion university Israel, in collaboration with the deaf-blind center in Israel.</string>
+    <string name="app_version" translatable="false">3.5</string>
+    <string name="summary_support">Got any queries? We are happy to help!</string>
+    <string name="title_send_feedback">Send Feedback</string>
+    <string name="title_faq">FAQ</string>
+    <string name="summary_faq">View frequently asked questions</string>
+    <string name="url_faq" translatable="false">https://www.androidhive.info/privacy-policy/</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="url_privacy" translatable="false">https://www.androidhive.info/privacy-policy/</string>
+    <string name="title_terms">Terms &amp; Conditions</string>
+    <string name="url_terms" translatable="false">https://www.androidhive.info/terms-of-service/</string>
+    <string name="title_version">Version</string>
+    <string name="choose_email_client">Choose email client</string>
+    <string name="key_font_size" translatable="false">key_font_size</string>
+    <string name="key_send_feedback" translatable="false">key_send_feedback</string>
+
+    <!-- MainActivity use -->
+    <string name="offline_stt_warning">Hebrew Speech Recognition is unavailable in offline mode !</string>
+    <string name="missing_tts_warning">TTS engine connection in Hebrew is not fully set up</string>
+    <string name="en_tag" translatable="false">en-US</string>
+    <string name="he_tag" translatable="false">he-IL</string>
+
+    <!-- Introduction Activity use -->
+    <string name="title_activity_introduction" translatable="false">IntroductionActivity</string>
+
+    <!-- OnBoard Screen. -->
+    <string name="ob_header1">Text To Speech</string>
+    <string name="ob_header2">Speech To Text</string>
+    <string name="ob_header3">Bluetooth Connection</string>
+    <string name="ob_header4">Train mode</string>
+    <string name="ob_get_started">GET STARTED</string>
+    <string name="ob_desc1">Speak messages on your behalf with appropriate accessibility indications</string>
+    <string name="ob_desc2">Recognize the surroundings voices on your behalf in English &amp; Hebrew</string>
+    <string name="ob_desc3">If needed, you can Read &amp; Write with a standard braille keyboard via Bluetooth</string>
+    <string name="ob_desc4">Informs you when the train enters a new city using GPS or Internet connection.</string>
+
+    <string name="popup_title_STT">Offline</string>
+    <string name="popup_description_STT">You appeared to be offline. Try to add the chosen STT language in the device Offline Speech Recognition settings.</string>
+    <string name="popup_btn_close">close</string>
+    <string name="popup_btn_setting">device settings</string>
+
+    <string name="popup_title_TTS">Missing language</string>
+    <string name="popup_description_TTS">Missing language in the Text-To-Speech Engine settings. For Hebrew install Vocalizer TTS app.</string>
+    <string name="popup_btn_app_link">Download TTS Engine</string>
+
+    <string name="popup_title_train_mode">Location unavailable</string>
+    <string name="popup_description_train_mode">Train mode requires GPS or Internet connection. Please try to enable GPS or connect to a Network.</string>
+    <string name="popup_btn_gps">GPS settings</string>
+
+    <string name="my_message_hint">Type</string>
+    <string name="send_message_btn">Send</string>
+    <string name="my_message_disc">I said</string>
+    <string name="thier_message_disc">Recognize</string>
+    <string name="read_check_disc">Next</string>
+
+    <string name="location_failed">Trying to connect</string>
+
+    <string name="audio_needed_title">Audio permission is needed</string>
+    <string name="audio_needed_summary">Speech Recognition need this permission. Conversation transcripts stay secure on your device</string>
+    <string name="audio_needed_ok">Ok</string>
+
+</resources>

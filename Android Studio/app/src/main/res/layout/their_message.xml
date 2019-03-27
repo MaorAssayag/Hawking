@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="10dp"
+    android:paddingStart="15dp"
+    android:paddingEnd="45dp"
+    android:clipToPadding="false">
+
+    <TextView
+        android:id="@+id/message_body"
+        android:contentDescription="@string/thier_message_disc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/their_message"
+        android:textIsSelectable="true"
+        android:elevation="1dp"
+        android:padding="10dp"
+        android:textStyle="normal"
+        android:textColor="?android:attr/textColorPrimary"
+        android:text="Placeholder message"
+        android:onClick="updateCheckRead"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/read_check"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="5dp"
+        android:background="@drawable/ic_read_off"
+        android:contentDescription="@string/read_check_disc"
+        android:visibility="invisible"
+        android:scaleType="fitCenter" />
+</LinearLayout>
+
+

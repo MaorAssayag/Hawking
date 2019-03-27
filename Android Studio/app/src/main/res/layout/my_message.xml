@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="10dp"
+    android:paddingEnd="15dp"
+    android:paddingStart="60dp"
+    android:clipToPadding="false">
+
+    <TextView
+        android:id="@+id/message_body"
+        android:contentDescription="@string/my_message_disc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/my_message"
+        android:textIsSelectable="true"
+        android:elevation="0dp"
+        android:padding="10dp"
+        android:textStyle="normal"
+        android:textColor="?android:attr/textColorPrimary"
+        android:text="Placeholder message"
+        android:textSize="18sp" />
+</RelativeLayout>
