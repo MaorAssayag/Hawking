@@ -52,6 +52,10 @@
     <string name="summary_language_stt">Choose the recognize speech language</string>
     <string name="key_language_stt" translatable="false">key_language_stt</string>
 
+    <string name="title_settings_link_stt">STT Device Settings</string>
+    <string name="summary_settings_link_stt">Open STT engine settings of your device</string>
+    <string name="key_settings_link_stt" translatable="false">key_settings_link_stt</string>
+
     <!-- TTS settings pref -->
     <string name="pref_title_tts">Text to Speech</string>
     <string name="pref_title_vibrate">Vibrate</string>
@@ -82,6 +86,10 @@
     <string name="title_language_tts">TTS Language</string>
     <string name="summary_language_tts">Choose the Text-To-Speak language</string>
     <string name="key_language_tts" translatable="false">key_language_tts</string>
+
+    <string name="title_settings_link_tts">TTS Device Settings</string>
+    <string name="summary_settings_link_tts">Open TTS engine settings of your device</string>
+    <string name="key_settings_link_tts" translatable="false">key_settings_link_tts</string>
 
     <!-- Pre-save Subscreen pref -->
     <string name="pref_title_subscreen">About pre-save sentences</string>
@@ -168,5 +176,8 @@
     <string name="audio_needed_title">Audio permission is needed</string>
     <string name="audio_needed_summary">Speech Recognition need this permission. Conversation transcripts stay secure on your device</string>
     <string name="audio_needed_ok">Ok</string>
+
+    <string name="train_mode">Train mode</string>
+
 
 </resources>

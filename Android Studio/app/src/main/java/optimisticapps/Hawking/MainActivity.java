@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
     private TextToSpeech tts; //Text-To-Speech object. handles all tts operations
     private final int THRESH_HOLD_RECOGNITION = 1;
     private PulseView pulseView_train;
+    private PulseView pulseView_sendMessage;
+    public static double chat_messages_limit = 40;
+    private boolean now_invisible = false;
 
     /**
      * User settings
@@ -109,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean max_volume_enable = true; // does the user want the device to operate TTS with max-volume(always)
     private boolean allow_to_speak = true;// allow to operate tts services
     private boolean allow_to_vibrate = true; // allow to vibrate when tts operate
-    private boolean enable_bold = false; // enable bold text in chat
+    private boolean enable_bold = true; // enable bold text in chat
     private boolean repeat_on_blank = false; // repeat speaking the last message sent by the user when the user send a blank message
     private boolean repeat_on_longpress = true; // repeat the current long-pressed message
     private boolean dark_mode = false;
@@ -137,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
      * POP UP messages
      */
     RelativeLayout mRelativeLayout;
-    public static final String PACKAGE_NAME_GOOGLE_NOW = "com.google.android.googlequicksearchbox";
+       public static final String PACKAGE_NAME_GOOGLE_NOW = "com.google.android.googlequicksearchbox";
     public static final String ACTIVITY_INSTALL_OFFLINE_FILES = "com.google.android.voicesearch.greco3.languagepack.InstallActivity";
 
     /**
@@ -243,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         // Voice wave initialize
         intent_recognize = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent_recognize.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -290,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(R.layout.custom_action_bar_layout);
+        getSupportActionBar().setElevation(2);
 
         // Text To Speech init
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -309,6 +314,7 @@ public class MainActivity extends AppCompatActivity {
                 if (allow_to_vibrate) {
                     vibrator.vibrate(pattern_heart_beat, 0);
                 }
+                pulseView_sendMessage.startPulse();
             }
             @Override
             public void onDone(String utteranceId) {
@@ -317,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isListening){
                     startRecognition();
                 }
+                pulseView_sendMessage.finishPulse();
             }
             @Override
             public void onError(String utteranceId) {
@@ -342,6 +349,16 @@ public class MainActivity extends AppCompatActivity {
                 startTrainMode(v);
             }
         });
+
+        pulseView_sendMessage = findViewById(R.id.sendImageButton);
+        pulseView_sendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessage(v);
+            }
+        });
+        // limit the chat view to avoid loading big chunks of data & security
+        chat_messages_limit = 50 - current_font_size * 0.3;
     }
 
     @Override
@@ -589,6 +606,29 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+            tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                @Override
+                public void onStart(String utteranceId) {
+                    if (allow_to_vibrate) {
+                        vibrator.vibrate(pattern_heart_beat, 0);
+                    }
+                    pulseView_sendMessage.startPulse();
+                }
+                @Override
+                public void onDone(String utteranceId) {
+                    // Speaking stopped.
+                    vibrator.cancel();
+                    if (isListening){
+                        startRecognition();
+                    }
+                    pulseView_sendMessage.finishPulse();
+                }
+                @Override
+                public void onError(String utteranceId) {
+                    Log.i(LOG_TAG, "onError: ");
+                    // Error section
+                }
+            });
         }
     }
 
@@ -770,6 +810,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 // add new message to the adapter
                 messageAdapter.add(customMessage);
+
                 // scroll the ListView to the last added element
                 messagesView.setSelection(messagesView.getCount() - 1);
             }
@@ -800,6 +841,20 @@ public class MainActivity extends AppCompatActivity {
 
         if (current_font_size != new_font_size || new_enable_bold != enable_bold) {
             current_font_size = new_font_size;
+            chat_messages_limit = 50 - current_font_size * 0.3;
+
+            // limit the message view
+            if (messageAdapter.getCount() > chat_messages_limit){
+                messageAdapter.saveFromIndex((int)(messageAdapter.getCount() - chat_messages_limit));
+            }
+
+            if (current_font_size > 100){
+                myMessageText.setHint("");
+                now_invisible = true;
+            }else if (now_invisible){
+                myMessageText.setHint(R.string.my_message_hint);
+                now_invisible = false;
+            }
             SharedPreferences.Editor prefEditor = sharedPref.edit();
             prefEditor.putInt("font_size", current_font_size);
             prefEditor.commit();
@@ -830,6 +885,14 @@ public class MainActivity extends AppCompatActivity {
         tts.speak(message_to_speak, TextToSpeech.QUEUE_FLUSH, null, message_to_speak);
     }
 
+    /**
+     * offlinePopUpWindows
+     * Pop-up a window that notify the user that the device is not connected to an
+     * internet connection. This pop-up will appear if the user try to use a missing
+     * offline Language model in STT operation.
+     *
+     * A direct solution to the problem will be available in this pop-up window.
+     */
     public void offlinePopUpWindows() {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
@@ -875,6 +938,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * TTSPopUpWindows
+     * Pop-up a window that notify the user that the device is not connected to an
+     * internet connection. This pop-up will appear if the user try to use a missing
+     * offline Language model in TTS operation.
+     *
+     * A direct solution to the problem will be available in this pop-up window.
+     */
     public void TTSPopUpWindows() {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
@@ -937,6 +1008,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * trainModePopUpWindows
+     * Pop-up a window that notify the user that the device is not connected to an
+     * internet connection or GPS connection.
+     * This pop-up will appear if the user try to use train mode without Location services
+     * enable nor internet connection.
+     *
+     * A direct solution to the problem will be available in this pop-up window.
+     */
     public void trainModePopUpWindows() {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
@@ -980,11 +1060,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * hideKeyboard
+     * Simple method to hide the on-screen keyboard (if visible).
+     * Used for pop-up windows.
+     *
+     * @param view - current context view
+     */
     public void hideKeyboard(View view) {
         InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    /**
+     * startTrainMode
+     * Train mode - notify the user with vibration and message when the train enters a
+     * new city. This mode required Location service enable (GPS) and active network connection.
+     * This mode act as a Service to be able to operate in the background (so it will continue
+     * to operate when the app is minimize or the phone is locked).
+     *
+     * The train mode icon will be animate with pulses when is on.
+     * The train mode Service will communicate to this Activity (send messages to the chat)
+     * through Message Handler object (init on onCreate of the Service myServiceTrainMode).
+     *
+     * @param view - click on the Train mode button in the Action Bar.
+     */
     public void startTrainMode(View view){
         this.train_mode_status = !this.train_mode_status;
 
@@ -1020,6 +1120,16 @@ public class MainActivity extends AppCompatActivity {
         prefEditor.apply();
     }
 
+    /**
+     * onRequestPermissionsResult
+     * After the user press 'ok' or 'denied' on permission request
+     * If it was Location Service - on access start Train mode
+     * If it was Audio recording - on access start Speech Recognition
+     *
+     * @param requestCode - private vars defined in the start of this file, used to identify the request source
+     * @param permissions - the permission itself
+     * @param grantResults - results of the action the user chose
+     */
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_LOCATION_PERMISSION_CODE:
@@ -1057,4 +1167,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+
+
 }

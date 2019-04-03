@@ -10,6 +10,8 @@ package optimisticapps.Hawking;
 //
 // Settings screen Activity
 
+import android.app.Fragment;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,9 +28,13 @@ import android.widget.Toast;
 import org.anasthase.androidseekbarpreference.SeekBarPreference;
 
 public class SettingsPrefActivity extends AppCompatPreferenceActivity {
-    private static final String TAG = SettingsPrefActivity.class.getSimpleName();
+    private static final String TAG_MAIN = MainPreferenceFragment.class.getSimpleName();
+    private static final String TAG_SUB = SubscreenFragment.class.getSimpleName();
     public static int current_font_size = 18;
     private static Toast last_toast;
+    public static final String PACKAGE_NAME_GOOGLE_NOW = "com.google.android.googlequicksearchbox";
+    public static final String ACTIVITY_INSTALL_OFFLINE_FILES = "com.google.android.voicesearch.greco3.languagepack.InstallActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +49,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
 
         //display back button. Fragments will handle its behavior
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(getResources().getString(R.string.title_activity_settings));
+        getSupportActionBar().setElevation(2);
         // load settings fragment
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MainPreferenceFragment(), "main").commit();
     }
@@ -51,6 +57,10 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
     @Override
     public void switchToHeader(Header header) {
         super.switchToHeader(header);
+    }
+
+    public void setTitle(String string) {
+        getSupportActionBar().setTitle(string);
     }
 
     @Override
@@ -66,7 +76,9 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
+            // inflate the Preferences and set the Action Bar title to Settings
+            AppCompatPreferenceActivity main = (AppCompatPreferenceActivity) getActivity();
+            main.getSupportActionBar().setTitle(getResources().getString(R.string.title_activity_settings));
             addPreferencesFromResource(R.xml.pref_main);
 
             //let the fragment intercept the ActionBar buttons:
@@ -77,16 +89,38 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             findPreference("pref_presave_subscreen").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    getFragmentManager().beginTransaction().replace(android.R.id.content, new SubscreenFragment(), "sub").commit();
+                    getFragmentManager().beginTransaction().replace(android.R.id.content, new SubscreenFragment(), TAG_SUB).addToBackStack(TAG_MAIN).commit();
                     return true;
                 }
             });
 
             // feedback preference click listener
-            Preference myPref = findPreference(getString(R.string.key_send_feedback));
-            myPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            Preference myPrefFeedback = findPreference(getString(R.string.key_send_feedback));
+            myPrefFeedback.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     sendFeedback(getActivity());
+                    return true;
+                }
+            });
+
+            Preference mPrefTTS_link2Settings = findPreference(getString(R.string.key_settings_link_tts));
+            mPrefTTS_link2Settings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent();
+                    intent.setAction("com.android.settings.TTS_SETTINGS");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivityForResult(intent, 0);
+                    return true;
+                }
+            });
+
+            Preference mPrefSTT_link2Settings = findPreference(getString(R.string.key_settings_link_stt));
+            mPrefSTT_link2Settings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(PACKAGE_NAME_GOOGLE_NOW, ACTIVITY_INSTALL_OFFLINE_FILES));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivityForResult(intent, 0);
                     return true;
                 }
             });
@@ -152,6 +186,13 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             });
         }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+            AppCompatPreferenceActivity main = (AppCompatPreferenceActivity) getActivity();
+            main.getSupportActionBar().setTitle(getResources().getString(R.string.title_activity_settings));
+        }
+
         private static void bindPreferenceSummaryToValue(Preference preference) {
             preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
@@ -181,6 +222,8 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             //let the fragment intercept the ActionBar buttons:
             setHasOptionsMenu(true);
+            AppCompatPreferenceActivity main = (AppCompatPreferenceActivity) getActivity();
+            main.getSupportActionBar().setTitle(getResources().getString(R.string.title_presave_subscreen));
             addPreferencesFromResource(R.xml.subscreen_pref);
 
             bindPreferenceSummaryToValue(findPreference("pref_presave_1"));
@@ -217,7 +260,13 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            Fragment f = getFragmentManager().findFragmentById(android.R.id.content);
+            if (f.getClass().getSimpleName().equals(TAG_SUB)){
+                getFragmentManager().popBackStack();
+            } else{
+                onBackPressed();
+            }
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

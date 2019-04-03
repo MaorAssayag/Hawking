@@ -36,6 +36,7 @@
         <item name="colorHawkingTitle">@color/colorText</item>
         <item name="colorPopUpBackground">@color/colorPrimary</item>
         <item name="colorPulseView">@color/colorPulseView</item>
+        <item name="colorPulseViewSendMessage">@color/colorPulseViewSendMessage</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
@@ -54,6 +55,7 @@
         <item name="colorHawkingTitle">@color/colorTextSecondryNight</item>
         <item name="colorPopUpBackground">@color/colorPrimaryNight</item>
         <item name="colorPulseView">@color/colorPulseViewNight</item>
+        <item name="colorPulseViewSendMessage">@color/colorPulseViewSendMessageNight</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 

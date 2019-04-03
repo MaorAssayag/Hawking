@@ -1,29 +1,4 @@
 package optimisticapps.Hawking;
-/**
- *   _   _                      _      _
- *  | | | |   __ _  __      __ | | __ (_)  _ __     __ _
- *  | |_| |  / _` | \ \ /\ / / | |/ / | | | '_ \   / _` |
- *  |  _  | | (_| |  \ V  V /  |   <  | | | | | | | (_| |
- *  |_| |_|  \__,_|   \_/\_/   |_|\_\ |_| |_| |_|  \__, |
- *                                                 |___/
- *
- * Hawking - A real-time communication system for deaf and blind people
- *
- *   Hawking was created to help people with struggle to communicate via a braille keyboard.
- *   This app enabling using TTS & STT calibrated with standard braille keyboard.
- *   This project is part of a final computer engineering project in ben-gurion university Israel,
- *   in collaboration with the deaf-blind center in Israel.
- *
- * Creators : Maor Assayag
- *            Refhael Shetrit
- *            Computer Engineer, Ben-gurion University, Israel
- *
- * Supervisors: Prof. Guterman Hugo
- * 		        Dr. Luzzatto Ariel
- *
- * Service (background) for train mode
- */
-
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,7 +15,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -49,8 +23,40 @@ import com.google.android.gms.location.LocationServices;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ *   _   _                      _      _
+ *  | | | |   __ _  __      __ | | __ (_)  _ __     __ _
+ *  | |_| |  / _` | \ \ /\ / / | |/ / | | | '_ \   / _` |
+ *  |  _  | | (_| |  \ V  V /  |   <  | | | | | | | (_| |
+ *  |_| |_|  \__,_|   \_/\_/   |_|\_\ |_| |_| |_|  \__, |
+ *                                                 |___/   ;)
+ *
+ * Hawking - A real-time communication system for deaf and blind people
+ *
+ *   Hawking was created to help people with struggle to communicate via a braille keyboard.
+ *   This app enabling using TTS & STT calibrated with standard braille keyboard.
+ *   This project is part of a final computer engineering project in ben-gurion university Israel,
+ *   in collaboration with the deaf-blind center in Israel.
+ *
+ * @author Maor Assayag
+ *         Computer Engineer, Ben-gurion University, Israel
+ *
+ * @author Refhael Shetrit
+ *         Computer Engineer, Ben-gurion University, Israel
+ *
+ * Supervisors: Prof. Guterman Hugo
+ * 		        Dr. Luzzatto Ariel
+ *
+ * @version 1.0
+ *
+ * Service (background) for train mode
+ */
+
 public class myServiceTrainMode extends Service {
 
+    /**
+     * General
+     */
     public SharedPreferences sharedPref; // SharedPreferences object for all the user settings to be saved on
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
@@ -66,10 +72,18 @@ public class myServiceTrainMode extends Service {
         return null;
     }
 
+    /**
+     * onCreate()
+     *
+     * The first method that will be called on creation of this Service.
+     * Initialize Geocoder object used to decode Latitude & Longitude from LocationManager
+     * to Address, City name etc.
+     *
+     * Initialize a callback to the LocationService which will be called on new update to the location.
+     */
     @Override
     public void onCreate() {
         super.onCreate();
-
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         geocoder = new Geocoder(this, Locale.forLanguageTag("he-IL"));
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -88,6 +102,17 @@ public class myServiceTrainMode extends Service {
         };
     }
 
+    /**
+     * onStartCommand(Intent, int, int)
+     *
+     * On start of the Service. Initialize a message handler for communication with the Main
+     * Activity . If the required permission isnt available do not start the Service.
+     *
+     * @param intent - override
+     * @param flags - override
+     * @param startId - override
+     * @return override
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle extras = intent.getExtras();
@@ -100,12 +125,27 @@ public class myServiceTrainMode extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    /**
+     * onDestroy()
+     *
+     * When the Service stopped run the method stopLocationUpdates (stop the request
+     * to get location updates)
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         stopLocationUpdates();
     }
 
+    /**
+     * getGeocoder(Location)
+     *
+     * The backbone of this class. After decoding the Location object update the current City
+     * in the SharedPreferences object, and sendMessage to Main Activity to notify the user
+     * (send message & vibrate).
+     *
+     * @param location - updated location object including all the required information
+     */
     public void getGeocoder(Location location){
         // Update UI with location data
         // check if GPS avaliable - notify if not
@@ -130,6 +170,15 @@ public class myServiceTrainMode extends Service {
         }
     }
 
+    /**
+     * createLocationRequest()
+     *
+     * Set the LocationRequest parameters with @interval time between requested updates(high
+     * interval = less battery consumption), the required accuracy (we need to differentiate
+     * cities so low accuracy is fine).
+     *
+     * @return LocationRequest object with the required parameters
+     */
     protected LocationRequest createLocationRequest() {
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setInterval(interval);
@@ -138,6 +187,16 @@ public class myServiceTrainMode extends Service {
         return locationRequest;
     }
 
+    /**
+     * sendMessage(String, state)
+     *
+     * Communicate with the Main Activity using message handler.
+     * The Service can send messages with specific state and string, for e.g. update the
+     * current city and failed messages.
+     *
+     * @param msg - the string to be sent to Main Activity
+     * @param state - the type of the message
+     */
     public void sendMessage(String msg, int state) {
         Message message = Message.obtain();
         Bundle bundle = new Bundle();
@@ -155,6 +214,10 @@ public class myServiceTrainMode extends Service {
         }
     }
 
+    /**
+     * stopLocationUpdates()
+     * Stop location request from the device, used to stop this Service operation.
+     */
     private void stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback);
     }

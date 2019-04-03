@@ -28,6 +28,7 @@
                 <!--android:icon="@drawable/ic_decrease"/>-->
 
             <CheckBoxPreference android:title="@string/pref_title_bold"
+                android:defaultValue="true"
                 android:key="@string/key_bold"
                 android:summary="@string/summary_bold"
                 android:icon="@drawable/ic_bold_text"/>
@@ -50,8 +51,8 @@
             <org.anasthase.androidseekbarpreference.SeekBarPreference
                 android:defaultValue="20"
                 android:key="@string/key_font_seekbar"
-                app:maxValue="90"
-                app:minValue="14"
+                app:maxValue="140"
+                app:minValue="16"
                 app:stepValue="4"
                 app:format="%d"/>
 
@@ -80,6 +81,14 @@
                 android:entryValues="@array/language_values"
                 android:summary="@string/summary_language_stt"
                 android:icon="@drawable/ic_tts_lang"/>
+
+            <Preference
+                android:selectable="true"
+                android:key="@string/key_settings_link_stt"
+                android:title="@string/title_settings_link_stt"
+                android:summary="@string/summary_settings_link_stt"
+                android:icon="@drawable/link_icon" />
+
         </PreferenceCategory>
 
         <PreferenceCategory android:title="@string/pref_title_tts">
@@ -132,6 +141,13 @@
                 android:entryValues="@array/language_values"
                 android:summary="@string/summary_language_tts"
                 android:icon="@drawable/ic_tts_lang"/>
+
+            <Preference
+                android:selectable="true"
+                android:key="@string/key_settings_link_tts"
+                android:title="@string/title_settings_link_tts"
+                android:summary="@string/summary_settings_link_tts"
+                android:icon="@drawable/link_icon" />
         </PreferenceCategory>
 
         <PreferenceCategory android:title="@string/pref_header_about">

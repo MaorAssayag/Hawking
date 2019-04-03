@@ -7,4 +7,5 @@
     <attr name="colorHawkingTitle" format="reference|color" />
     <attr name="colorPopUpBackground" format="reference|color" />
     <attr name="colorPulseView" format="reference|color" />
+    <attr name="colorPulseViewSendMessage" format="reference|color" />
 </resources>

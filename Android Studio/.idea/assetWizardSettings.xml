@@ -41,14 +41,26 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="trimmed" value="true" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                     </map>
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="imageAsset" value="C:\Users\MaorA\Desktop\Hawking\app\src\main\res\drawable\megaphone.jpg" />
-                                      <entry key="outputName" value="ic_dark_mode" />
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\MaorA\Desktop\Hawking\app\src\main\train1.png" />
+                                      <entry key="outputName" value="train1_on" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="a0adac" />
+                                      <entry key="themeColor" value="ad8c00" />
                                     </map>
                                   </option>
                                 </PersistentState>

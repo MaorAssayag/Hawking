@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--Day mode-->
     <color name="colorPrimary">#FAFAFA</color>
     <color name="colorPrimaryDark">#FAFAFA</color>
     <color name="colorAccent">#806591</color>
@@ -9,7 +10,9 @@
     <color name="colorPopUpText">#4A4A4A</color>
     <color name="colorMessageInput">#b9f1f1f1</color>
     <color name="colorPulseView">#FF5023</color>
+    <color name="colorPulseViewSendMessage">#4A4A4A</color>
 
+    <!--Dark mode-->
     <color name="colorPrimaryNight">#312c2c</color>
     <color name="colorPrimaryDarkNight">#312c2c</color>
     <color name="colorAccentNight">#e96806</color>
@@ -20,11 +23,15 @@
     <color name="colorPopUpTextNight">#929292</color>
     <color name="colorMessageInputNight">#965e5e5e</color>
     <color name="colorPulseViewNight">#ffae23</color>
+    <color name="colorPulseViewSendMessageNight">#c2b4b4</color>
 
+    <!--General-->
     <color name="status_bar_color">#FAFAFA</color>
     <color name="temp">#da9595</color>
     <color name="temp2">#090909</color>
     <color name="black">#000000</color>
+
+    <!--Recognition voice circle animation-->
     <color name="recognitionCircle">#1a0825</color>
     <color name="color1">#00aeef</color>
     <color name="color2">#ff5023</color>

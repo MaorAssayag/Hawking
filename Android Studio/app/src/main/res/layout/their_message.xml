@@ -5,6 +5,7 @@
     android:paddingVertical="10dp"
     android:paddingStart="15dp"
     android:paddingEnd="45dp"
+    android:focusable="true"
     android:clipToPadding="false">
 
     <TextView
