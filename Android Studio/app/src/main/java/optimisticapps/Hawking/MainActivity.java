@@ -2,6 +2,7 @@ package optimisticapps.Hawking;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.view.textservice.SentenceSuggestionsInfo;
+import android.view.textservice.SpellCheckerSession;
+import android.view.textservice.SuggestionsInfo;
+import android.view.textservice.TextInfo;
+import android.view.textservice.TextServicesManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -78,7 +84,7 @@ import java.util.Locale;
  * Main Activity
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SpellCheckerSession.SpellCheckerSessionListener {
 
     /**
      * General
@@ -99,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     private PulseView pulseView_sendMessage;
     public static double chat_messages_limit = 40;
     private boolean now_invisible = false;
+    private SpellCheckerSession mScs;
 
     /**
      * User settings
@@ -140,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
      * POP UP messages
      */
     RelativeLayout mRelativeLayout;
-       public static final String PACKAGE_NAME_GOOGLE_NOW = "com.google.android.googlequicksearchbox";
+    public static final String PACKAGE_NAME_GOOGLE_NOW = "com.google.android.googlequicksearchbox";
     public static final String ACTIVITY_INSTALL_OFFLINE_FILES = "com.google.android.voicesearch.greco3.languagepack.InstallActivity";
 
     /**
@@ -164,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor prefEditor = sharedPref.edit();
         boolean new_dark_mode = sharedPref.getBoolean("key_dark_mode", false);
-        boolean update_dark_mode = sharedPref.getBoolean("updatedDarkMode",true);
+        boolean update_dark_mode = sharedPref.getBoolean("updatedDarkMode", true);
         if (update_dark_mode) {
             this.dark_mode = new_dark_mode;
             prefEditor.putBoolean("updatedDarkMode", false);
@@ -178,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Check if we need to display our Onboarding Fragment - introduction activity
-        if (sharedPref.getBoolean("PREF_USER_FIRST_TIME",true)){
+        if (sharedPref.getBoolean("PREF_USER_FIRST_TIME", true)) {
             // start introduction
             startActivity(new Intent(this, IntroductionActivity.class));
             return;
@@ -192,11 +199,11 @@ public class MainActivity extends AppCompatActivity {
                 String msg = bundle.getString("msg1");
                 switch (state) {
                     case UPDATE_CURRENT_CITY:
-                        onMessage(msg,3);
+                        onMessage(msg, 3);
                         vibrator.vibrate(pattern_received, -1);
                         break;
                     case LOCATION_FAILED:
-                        onMessage(msg,3);
+                        onMessage(msg, 3);
                         vibrator.vibrate(pattern_wrong, -1);
                         break;
                     default:
@@ -238,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int pos, long id) {
-                if (repeat_on_longpress){
+                if (repeat_on_longpress) {
                     CustomMessage msg = (CustomMessage) messageAdapter.getItem(pos);
                     sendMessage(msg.getText());
                 }
@@ -246,13 +253,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Message spelling correction init
+        //updateSpellChecker();
 
         // Voice wave initialize
         intent_recognize = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent_recognize.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent_recognize.putExtra(RecognizerIntent.EXTRA_LANGUAGE, this.stt_language);// default en_US
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-        recognitionProgressView =  findViewById(R.id.recognition_view);
+        recognitionProgressView = findViewById(R.id.recognition_view);
         recognitionProgressView.setSpeechRecognizer(speechRecognizer);
         recognitionProgressView.setRecognitionListener(new RecognitionListenerAdapter() {
             @Override
@@ -265,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
             public void onError(int error) {
                 String errorMessage = getErrorText(error);
                 Log.d(LOG_TAG, "FAILED " + errorMessage);
-                if (error != SpeechRecognizer.ERROR_CLIENT){
+                if (error != SpeechRecognizer.ERROR_CLIENT) {
                     Toast.makeText(MainActivity.this, "FAILED " + errorMessage, Toast.LENGTH_SHORT).show();
                     vibrator.vibrate(pattern_wrong, -1);
                     setRecognizeSpeech();
@@ -284,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
         recognitionProgressView.setCircleRadiusInDp(4);
         recognitionProgressView.play();
         int multi = 3;
-        int[] heights = { multi * 16 , multi * 23 , multi * 16, multi * 22, multi * 18 };
+        int[] heights = {multi * 16, multi * 23, multi * 16, multi * 22, multi * 18};
         recognitionProgressView.setBarMaxHeightsInDp(heights);
         //recognitionProgressView.setSpacingInDp(2);
         //recognitionProgressView.setIdleStateAmplitudeInDp(2);
@@ -300,14 +309,14 @@ public class MainActivity extends AppCompatActivity {
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                if(status != TextToSpeech.ERROR) {
+                if (status != TextToSpeech.ERROR) {
                     tts.setLanguage(Locale.ENGLISH);
                 }
             }
         });
 
         // Get instance of Vibrator from current Context
-        vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
             @Override
             public void onStart(String utteranceId) {
@@ -316,15 +325,17 @@ public class MainActivity extends AppCompatActivity {
                 }
                 pulseView_sendMessage.startPulse();
             }
+
             @Override
             public void onDone(String utteranceId) {
                 // Speaking stopped.
                 vibrator.cancel();
-                if (isListening){
+                if (isListening) {
                     startRecognition();
                 }
                 pulseView_sendMessage.finishPulse();
             }
+
             @Override
             public void onError(String utteranceId) {
                 Log.i(LOG_TAG, "onError: ");
@@ -333,10 +344,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //pref = getApplicationContext().getSharedPreferences("pref_main", 0); // 0 - for private mode
-        if (!sharedPref.contains("font_size")){
+        if (!sharedPref.contains("font_size")) {
             prefEditor.putInt("font_size", 20);
-            prefEditor.putBoolean("requestingLocationUpdates",false);
-            prefEditor.putBoolean("updatedDarkMode",false);
+            prefEditor.putBoolean("requestingLocationUpdates", false);
+            prefEditor.putBoolean("updatedDarkMode", false);
             prefEditor.apply();
         }
 
@@ -373,21 +384,21 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * This method will start actively speech recognition if available.
-     *
+     * <p>
      * First the function make sure that we have the permission to record audio, notice
      * that we ask those permissions in AndroidManifest.xml (app installation)
      * and in the first time that app is running.
-     *
+     * <p>
      * If the current desired language of speech to be detected is unavailable,
      * this.unavailable_stt will be false and the user will get a warning Toast
      * with a 'wrong' vibrate.
-     *
+     * <p>
      * In addition, this method responsible for the speech-wave view animation to be started.
-     *
+     * <p>
      * this.recognizeSpeech : if the user allow speech recognition (e.g. a button)
      * this.unavailable_stt : if the current desired language of speech to be detected is unavailable
      */
-    private void startRecognition(){
+    private void startRecognition() {
         if (recognizeSpeech) {
             if (ContextCompat.checkSelfPermission(MainActivity.this,
                     Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -395,13 +406,13 @@ public class MainActivity extends AppCompatActivity {
                 // This will make sure that the user allowing voice recording permissions.
                 // When the user has been giving the permission this method will be called again to perform speechRecognition
                 ActivityCompat.requestPermissions(this,
-                        new String[] { Manifest.permission.RECORD_AUDIO },
+                        new String[]{Manifest.permission.RECORD_AUDIO},
                         REQUEST_RECORD_AUDIO_PERMISSION_CODE);
 
             } else {
-                this.unavailable_stt =  this.stt_language.equals("he-IL") && !isNetworkAvailable();
+                this.unavailable_stt = this.stt_language.equals("he-IL") && !isNetworkAvailable();
 
-                if (this.unavailable_stt){
+                if (this.unavailable_stt) {
                     vibrator.vibrate(pattern_wrong, -1);
                     offlinePopUpWindows();
                 } else {
@@ -421,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Used only in onError in recognitionProgressView (animation of voice-wave)
      */
-    public void setRecognizeSpeech(){
+    public void setRecognizeSpeech() {
         this.recognizeSpeech = false;
     }
 
@@ -433,7 +444,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param view - speech-wave view on the UI
      */
-    public void switchRecognition(View view){
+    public void switchRecognition(View view) {
         this.recognizeSpeech = !this.recognizeSpeech;
         if (this.recognizeSpeech && this.doneReading) {
             this.isListening = true;
@@ -453,10 +464,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void showResults(Bundle results) {
         this.isListening = false;
-        if (clear_speech_recognition){
+        if (clear_speech_recognition) {
             // just ignore captured voices
             clear_speech_recognition = false;
-        }else {
+        } else {
             // Voice recognition is done
             speechRecognizer.stopListening();
             ArrayList<String> matches = results
@@ -470,7 +481,7 @@ public class MainActivity extends AppCompatActivity {
                 this.isListening = true;
                 startRecognition();
                 // place for voice notation
-            }else{
+            } else {
                 this.doneReading = false;
             }
         }
@@ -483,7 +494,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param view - Setting icon on the Action-Bar
      */
-    public void startSettingActivity(View view){
+    public void startSettingActivity(View view) {
         startActivity(new Intent(MainActivity.this, SettingsPrefActivity.class));
     }
 
@@ -502,10 +513,10 @@ public class MainActivity extends AppCompatActivity {
         int position = listView.getPositionForView(parentRow);
         // here we will replace this with just increasing position
         boolean fromService = messageAdapter.updateReadOnMessage(position); // update check mark on this message
-        if (recognitionMessagesCount > 0){
+        if (recognitionMessagesCount > 0) {
             recognitionMessagesCount--;
         }
-        if (!fromService && recognitionMessagesCount == THRESH_HOLD_RECOGNITION - 1){
+        if (!fromService && recognitionMessagesCount == THRESH_HOLD_RECOGNITION - 1) {
             // if the user done read at lease before the 3 fresh messages - enable speech recognition again
             this.doneReading = true;
             this.isListening = true;
@@ -518,7 +529,7 @@ public class MainActivity extends AppCompatActivity {
      * onResume is part of the app life-cycle.
      * We used this method to make adjustments after the user came back from Setting Activity
      * or start the app again (we are using SharedPreferences to save user-settings).
-     *
+     * <p>
      * This method covers Dark mode, app title, STT Language, TTS Language, Font size in chat
      * and many more User-Settings for the app features.
      */
@@ -526,9 +537,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         SharedPreferences.Editor prefEditor = sharedPref.edit();
         boolean new_dark_mode = sharedPref.getBoolean("key_dark_mode", false);
-        if (new_dark_mode != this.dark_mode){
+        if (new_dark_mode != this.dark_mode) {
             this.dark_mode = new_dark_mode;
-            prefEditor.putBoolean("updatedDarkMode",true);
+            prefEditor.putBoolean("updatedDarkMode", true);
             prefEditor.commit();
             MainActivity.this.recreate();
         }
@@ -538,7 +549,7 @@ public class MainActivity extends AppCompatActivity {
         repeat_on_blank = sharedPref.getBoolean("key_repeat_enable", false);
         repeat_on_longpress = sharedPref.getBoolean("key_repeat_longpress", true);
         shortcut_template = sharedPref.getString("key_presave", "a");
-        max_volume_enable = sharedPref.getBoolean("key_max_volume",true);
+        max_volume_enable = sharedPref.getBoolean("key_max_volume", true);
         currentCity = sharedPref.getString("currentCity", "");
         requestingLocationUpdates = sharedPref.getBoolean("requestingLocationUpdates", false);
         updateAppTitle(sharedPref.getString("key_myname", getString(R.string.app_name_title)));
@@ -552,10 +563,11 @@ public class MainActivity extends AppCompatActivity {
     /**
      * updateAppTitle
      * A simple method to adjust the app title in the Custom Action Bar to the desired @param name.
+     *
      * @param name - the desired new name in the Action Bar
      */
-    private void updateAppTitle(String name){
-        if (name!=null && !this.myName.equals(name) && findViewById(R.id.HawkingLogoText) != null){
+    private void updateAppTitle(String name) {
+        if (name != null && !this.myName.equals(name) && findViewById(R.id.HawkingLogoText) != null) {
             this.myName = name;
             TextView app_title = findViewById(R.id.HawkingLogoText);
             app_title.setText(name);
@@ -568,10 +580,9 @@ public class MainActivity extends AppCompatActivity {
      * to be fed to the RecognizeListener.
      *
      * @param language - language code parameter consists of a BCP-47 identifier for
-     *                   e.g. 'he-IL', 'iw-IL', 'en-US'
-     *
+     *                 e.g. 'he-IL', 'iw-IL', 'en-US'
      */
-    private void updateSTTLanguage(String language){
+    private void updateSTTLanguage(String language) {
         // if the desired language is different from the current stt language
         if (!this.stt_language.equals(language)) {
             // if the desired language is hebrew, and there is not an internet connection
@@ -579,7 +590,7 @@ public class MainActivity extends AppCompatActivity {
             intent_recognize = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent_recognize.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent_recognize.putExtra(RecognizerIntent.EXTRA_LANGUAGE, this.stt_language);
-            intent_recognize.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE,true);
+            intent_recognize.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, true);
             //intent_recognize.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 30000);
         }
     }
@@ -592,16 +603,16 @@ public class MainActivity extends AppCompatActivity {
      * later on if this check failed we give the user a pop-up message with solutions.
      *
      * @param language - language code parameter consists of a BCP-47 identifier for
-     *                   e.g. 'he-IL', 'iw-IL', 'en-US'
+     *                 e.g. 'he-IL', 'iw-IL', 'en-US'
      */
-    private void updateTTSLanguage(String language){
+    private void updateTTSLanguage(String language) {
         final Locale new_locale = Locale.forLanguageTag(language);
         if (!this.tts_language.equals(language) || (tts != null && tts.isLanguageAvailable(new_locale) < 0)) {
             this.tts_language = language;
             tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
                 @Override
                 public void onInit(int status) {
-                    if(status != TextToSpeech.ERROR) {
+                    if (status != TextToSpeech.ERROR) {
                         tts.setLanguage(new_locale);
                     }
                 }
@@ -614,15 +625,17 @@ public class MainActivity extends AppCompatActivity {
                     }
                     pulseView_sendMessage.startPulse();
                 }
+
                 @Override
                 public void onDone(String utteranceId) {
                     // Speaking stopped.
                     vibrator.cancel();
-                    if (isListening){
+                    if (isListening) {
                         startRecognition();
                     }
                     pulseView_sendMessage.finishPulse();
                 }
+
                 @Override
                 public void onError(String utteranceId) {
                     Log.i(LOG_TAG, "onError: ");
@@ -654,12 +667,14 @@ public class MainActivity extends AppCompatActivity {
      *
      * @return if the device have an Location Service available
      */
-    private boolean isLocationServiceAvailable(){
+    private boolean isLocationServiceAvailable() {
         //TODO check for LocationManager.NETWORK_PROVIDER
-        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = false;
-        try { gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+        }
         return gps_enabled;
     }
 
@@ -723,27 +738,89 @@ public class MainActivity extends AppCompatActivity {
      * sendMessage
      * This method is the main function for represent the User text (on-display keyboard or braille keyboard).
      * in the conversation flow.
-     *
+     * <p>
      * Supports pre-saved sentences activated with the shortcut template set in User-Settings.
      * Supports repeat the last message when the user send an empty message
      * Supports adjusting the output volume for TTS according to the User-Settings.
-     *
+     * <p>
      * If the current chosen TTS language is unavailable a POP-UP message will appear on
      * screen with solutions.
      *
      * @param message - the message to be spoken
      */
     public void sendMessage(String message) {
-        String message_to_speak = "";
         int length = this.shortcut_template.length();
-        if (message.length() == length + 1){
-            if (message.substring(0,length).equals(this.shortcut_template) && Character.isDigit(message.charAt(length))){
-                message =  sharedPref.getString("pref_presave_" + message.charAt(length) ,"");
-                if (message.length() == 0){
+        if (message.length() == length + 1) {
+            if (message.substring(0, length).equals(this.shortcut_template) && Character.isDigit(message.charAt(length))) {
+                message = sharedPref.getString("pref_presave_" + message.charAt(length), "");
+                if (message.length() == 0) {
                     Toast.makeText(this, "No such shortcut", Toast.LENGTH_SHORT).show();
                 }
             }
         }
+        speakMessage(message);
+//        if (message.length() == 0 || (mScs !=null && mScs.isSessionDisconnected())){
+//            speakMessage(message);
+//        } else {
+        // Check for spelling correction
+//            if (mScs != null) {
+//                mScs.getSentenceSuggestions(new TextInfo[]{new TextInfo(message)}, 5);
+//            } else {
+//                updateSpellChecker();
+//                if (mScs != null) {
+//                    mScs.getSentenceSuggestions(new TextInfo[]{new TextInfo(message)}, 5);
+//                } else {
+//                    // Show the message to user
+//                    Toast.makeText(this, "Please turn on the spell checker from setting", Toast.LENGTH_LONG).show();
+//                    // You can even open the settings page for user to turn it ON
+//                    ComponentName componentToLaunch = new ComponentName("com.android.settings",
+//                            "com.android.settings.Settings$SpellCheckersSettingsActivity");
+//                    Intent intent = new Intent();
+//                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//                    intent.setComponent(componentToLaunch);
+//                    try {
+//                        this.startActivity(intent);
+//                    } catch (ActivityNotFoundException e) {
+//                    }
+//                }
+//            }
+    //}
+//        // Add the message to the chat list-view
+//        if (message.length() > 0) {
+//            onMessage(message, 1);
+//            message_to_speak = message;
+//        }else if (repeat_on_blank){
+//            // the user pressed send on a blank message, repeat the prev message
+//            // need to be a setting !
+//            message_to_speak = messageAdapter.getLastUserMessage();
+//        }
+//
+//        // if allowed to TTS, speak the Text entered in chat
+//        if (allow_to_speak && message_to_speak.length() > 0){
+//            if (this.isListening){
+//                clear_speech_recognition = true;
+//                speechRecognizer.stopListening();
+//            }
+//            // Check if the language is unavailable
+//            final Locale new_locale = Locale.forLanguageTag(this.tts_language);
+//            if (tts.isLanguageAvailable(new_locale) < 0){
+//                vibrator.vibrate(pattern_wrong, -1);
+//                TTSPopUpWindows();
+//            } else {
+//                // User-settings : if max volume is enabled in app settings - speak with the max volume
+//                if (max_volume_enable){
+//                    AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+//                    am.setStreamVolume(AudioManager.STREAM_MUSIC,am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
+//                }
+//                tts.speak(message_to_speak, TextToSpeech.QUEUE_FLUSH, null, message_to_speak);
+//                Log.i(LOG_TAG, "spoke :" + message_to_speak);
+//            }
+//        }
+//        myMessageText.getText().clear();
+    }
+
+    public void speakMessage(String message){
+        String message_to_speak = "";
 
         // Add the message to the chat list-view
         if (message.length() > 0) {
@@ -777,6 +854,38 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         myMessageText.getText().clear();
+    }
+
+    private void updateSpellChecker(){
+        // Message spelling correction init
+        final TextServicesManager tsm = (TextServicesManager)
+                getSystemService(Context.TEXT_SERVICES_MANAGER_SERVICE);
+        this.mScs = tsm.newSpellCheckerSession(null,Locale.ENGLISH, this, false);
+//        mScs = tsm.newSpellCheckerSession(null, Locale.ENGLISH,
+//                new SpellCheckerSession.SpellCheckerSessionListener() {
+//            @Override
+//            public void onGetSuggestions(SuggestionsInfo[] results) {
+//            }
+//
+//            @Override
+//            public void onGetSentenceSuggestions(final SentenceSuggestionsInfo[] results) {
+//                final StringBuilder sb = new StringBuilder();
+//                for(SentenceSuggestionsInfo result:results){
+//                    int n = result.getSuggestionsCount();
+//                    for(int i=0; i < n; i++){
+//                        int m = result.getSuggestionsInfoAt(i).getSuggestionsCount();
+//
+//                        for(int k=0; k < m; k++) {
+//                            sb.append(result.getSuggestionsInfoAt(i).getSuggestionAt(k))
+//                                    .append("\n");
+//                        }
+//                        sb.append("\n");
+//                    }
+//                }
+//                // speak the message after correction
+//                speakMessage(sb.toString());
+//            }
+//        }, true);
     }
 
     /**
@@ -1169,4 +1278,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onGetSuggestions(SuggestionsInfo[] results) {
+
+    }
+
+    @Override
+    public void onGetSentenceSuggestions(SentenceSuggestionsInfo[] results) {
+        final StringBuilder sb = new StringBuilder();
+        for(SentenceSuggestionsInfo result:results){
+            int n = result.getSuggestionsCount();
+            for(int i=0; i < n; i++){
+                int m = result.getSuggestionsInfoAt(i).getSuggestionsCount();
+
+                for(int k=0; k < m; k++) {
+                    sb.append(result.getSuggestionsInfoAt(i).getSuggestionAt(k))
+                            .append("\n");
+                }
+                sb.append("\n");
+            }
+        }
+        // speak the message after correction
+        speakMessage(sb.toString());
+    }
 }
