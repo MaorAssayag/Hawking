@@ -15,9 +15,9 @@ The project was chosen to represent the Department of Electrical and Computer En
      
 #
 #
-<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/poster.JPG" width="100%" height="100%">
-#
-#
+<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/poster.JPG" width="90%" height="90%">  
+#  
+#  
   
 ### Abstract
 
