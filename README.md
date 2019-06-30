@@ -65,4 +65,6 @@ Head of laboratort for autonomous robotics BGU
 *Dr. Luzzatto Ariel*  
 CTO at Melotec.lt & CEO at L&L Research  
 
-![Output sample](https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/eng_demo_1.gif)
+<a href="https://www.youtube.com/watch?v=KQU1-8t-ars">![Output sample](https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/eng_demo_1.gif)
+</a>     
+
