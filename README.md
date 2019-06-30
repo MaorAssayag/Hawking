@@ -10,7 +10,8 @@ This app enabling using TTS & STT calibrated with standard braille keyboard.
 This project is part of a final computer engineering project in ben-gurion university Israel,
 in collaboration with the deaf-blind center in Israel.
 
-![alt text](https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/poster.PNG)
+<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/poster.png" width="90%" height="90%">
+
 
 ### Abstract
 
