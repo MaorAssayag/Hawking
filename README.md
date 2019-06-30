@@ -42,7 +42,14 @@ Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-S
 <a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking"><img src="http://www.mycalou.com/wp-content/uploads/2016/12/Google_Play_logo_2015.png" width="150"></a>     
   
 #### Demo videos in Youtube    
-<a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="100"></a>     
+<a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="100"></a>  
+
+#### User Guide in English   
+<a href="https://docs.wixstatic.com/ugd/ad58f8_1ee4c6fc55bc4c18a19138974ed04948.pdf?index=true"><img src="https://static.wixstatic.com/media/40d80b8089c8418a961cb75d96d491f7.png/v1/fill/w_71,h_96,al_c,q_80,usm_0.66_1.00_0.01/40d80b8089c8418a961cb75d96d491f7.webp" width="60"></a>  
+
+#### User Guide in Hebrew   
+<a href="https://docs.wixstatic.com/ugd/ad58f8_9534e1c7ff81401185ae0dcac1d3794d.pdf?index=true"><img src="https://static.wixstatic.com/media/40d80b8089c8418a961cb75d96d491f7.png/v1/fill/w_71,h_96,al_c,q_80,usm_0.66_1.00_0.01/40d80b8089c8418a961cb75d96d491f7.webp" width="60"></a>  
+
   
 ### Creators
 *Maor Assayag*  
