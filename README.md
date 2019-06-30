@@ -31,38 +31,29 @@ The system's features and interface support English & Hebrew, and the developmen
 
 Initial tests were performed with the deaf-blind community and the feedback were very positive and used to improve the application. Future work will be focused on porting the app for iOS and continue the design and development of a new portable braille keyboard that combines the layout of a standard keyboard (Write) and a braille display bar (Read) that can enable deaf-blind people to communicate more naturally and effectively.
 
-Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-Speech, Speech-to-Braille, accessibility indicators, Beit David Institute
+Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-Speech, Speech-to-Braille, accessibility indicators, Beit David Institute  
   
-<br />
-<br />
 ### Offical website of the product  
-<a href="https://hawkingbgu.wixsite.com/application"><img src="https://weglot.com/wp-content/uploads/20190415174645/wix-logo2-1024x398.png" width="100"></a>   
+<a href="https://hawkingbgu.wixsite.com/application"><img src="https://weglot.com/wp-content/uploads/20190415174645/wix-logo2-1024x398.png" width="100"></a>     
   
-<br />
-<br />
 ### Official Google Play Page  
-<a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking"><img src="http://www.mycalou.com/wp-content/uploads/2016/12/Google_Play_logo_2015.png" width="150"></a>   
+<a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking"><img src="http://www.mycalou.com/wp-content/uploads/2016/12/Google_Play_logo_2015.png" width="150"></a>     
   
-<br />
-<br />
-### Demo videos in Youtube  
-<a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="130"></a>   
+### Demo videos in Youtube    
+<a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="130"></a>     
   
- <br />
- <br />
 ### Creators
 *Maor Assayag*  
 Computer Engineer, Ben-gurion University, Israel
 
 *Refhael Shetrit*  
-Computer Engineer, Ben-gurion University, Israel
+Computer Engineer, Ben-gurion University, Israel  
 
 ### Supervisors
 *Prof. Guterman Hugo*  
 Head of laboratort for autonomous robotics BGU
  		       
 *Dr. Luzzatto Ariel*  
-CTO at Melotec.lt & CEO at L&L Research
-<br />
-<br />
+CTO at Melotec.lt & CEO at L&L Research  
+
 ![Output sample](https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/eng_demo_1.gif)
