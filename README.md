@@ -39,7 +39,7 @@ Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-S
 <a href="https://hawkingbgu.wixsite.com/application"><img src="https://weglot.com/wp-content/uploads/20190415174645/wix-logo2-1024x398.png" width="80"></a>     
   
 #### Official Google Play Page  
-<a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking"><img src="https://4.bp.blogspot.com/-1LBva3U1LCI/W6kL2pl9ZYI/AAAAAAAAFys/grkBZRKkAWE1eLAh6DPffThJ7gP__SREACLcBGAs/s1600/play_logo_16_9%2B%25285%2529.png" width="200"></a>     
+<a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking"><img src="https://www.potomacofficersclub.com/assets/images/get-on-google-play.png" width="200"></a>     
   
 #### Demo videos in Youtube    
 <a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="100"></a>  
