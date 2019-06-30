@@ -34,16 +34,15 @@ Initial tests were performed with the deaf-blind community and the feedback were
 Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-Speech, Speech-to-Braille, accessibility indicators, Beit David Institute
   
   
-### Find more
-# Offical website of the product  
+### Offical website of the product  
 <a href="https://hawkingbgu.wixsite.com/application"><img src="https://weglot.com/wp-content/uploads/20190415174645/wix-logo2-1024x398.png" width="150"></a>   
   
   
-# Official Google Play Page  
+### Official Google Play Page  
 <a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking"><img src="http://www.mycalou.com/wp-content/uploads/2016/12/Google_Play_logo_2015.png" width="150"></a>   
   
   
-# Demo videos in Youtube  
+### Demo videos in Youtube  
 <a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="150"></a>   
   
   
