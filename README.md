@@ -10,20 +10,30 @@ This app enabling using TTS & STT calibrated with standard braille keyboard.
 This project is part of a final computer engineering project in ben-gurion university Israel,
 in collaboration with the deaf-blind center in Israel.
 
+<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/poster.PNG" width="90%" height="90%">
+
 
 ### Abstract
 
-The increasing accessibility to today's smart technology enables the search for solutions for populations with different disabilities, such as deafness and blindness, to improve their lives. According to statistics, over 1400 Israelis have the dual disability of deaf-blindness, when the leading cause of deaf blindness in Israel is an incurable disease called "Usher syndrome".
+The increasing accessibility to today's smart technology enables the search for solutions for populations with different disabilities, such as deafness and blindness, to improve their lives. A deaf-blind person does not hear speech or see sign language,  therefore they are excluded from every framework, cut off from an accessible means of communication with the environment.
 
-Blind deaf people do not hear the blind or see the sign language of the deaf and therefore cannot fit into their company. Therefore, the deaf-blind are excluded from every framework, cut off from an accessible means of communication with the environment.
+The main purpose of this project is to develop a system that will enable verbal communication with the deaf-blind, thus relieving their loneliness and enhancing their independence. Today there is no technological solution available to this community, especially in Hebrew. Development of the system will emphasize accessibility to the Israeli community using the tools available to them and on meeting their daily needs.
 
-The purpose of this project is to develop a system that will enable verbal communication with the deaf-blind, thus relieving their loneliness and enhancing their independence. Today there is no technological solution available to this community, especially in Hebrew. Development of the system will emphasize accessibility to the Israeli community using the tools available to them, with an emphasis on meeting their daily needs.
+The system consists of an application on Android device which is connected to a standard Braille keyboard. The application performs Speech-to-Braille and Braille-to-Speech operations accompanied with appropriate accessibility indicators so that the conversation is understandable and continuous for both the speaker and the deaf-blind person.
 
-The main idea is to develop an application on an Android device that will be connected to a standard Braille keyboard (or develop another medium according to needs). The application will be able to perform Speech-to-Braille and Braille-to-Speech operations accompanied with the appropriate accessibility indication that the conversation is well executed and continuous for both the speaker and the deaf-blind person.
+The system's features and interface support English & Hebrew, and the development process was done in collaboration with the Deaf-blind center in Israel - Beit David Institute and the deaf-blind community in Israel.
 
-The system's language and interface will be Hebrew, and the development process will be done in collaboration with the Deaf-blind center in Israel - Beit David Institute and in cooperation with the deaf-blind community in Israel.
+Initial tests were performed with the deaf-blind community and the feedback were very positive and used to improve the application. Future work will be focused on porting the app for iOS and continue the design and development of a new portable braille keyboard that combines the layout of a standard keyboard (Write) and a braille display bar (Read) that can enable deaf-blind people to communicate more naturally and effectively.
 
-Keywords: deaf-blind, Usher syndrome, real-time communication, application, Android, Braille, Braille-to-Speech, Speech-to-Braille, accessibility indications, Beit David Institute
+Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-Speech, Speech-to-Braille, accessibility indicators, Beit David Institute
+
+
+### Screenshots
+<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/1.png" width="30%" height="30%">
+
+### Find more
+offical website of the product
+
 
 ### Authors
 *Maor Assayag*  
@@ -38,4 +48,6 @@ Head of laboratort for autonomous robotics BGU
  		       
 *Dr. Luzzatto Ariel*  
 CTO at Melotec.lt & CEO at L&L Research
+
+![Output sample](https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/eng_demo_1.gif)
 
