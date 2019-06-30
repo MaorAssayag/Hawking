@@ -8,9 +8,10 @@
 Hawking was created to help people with struggle to communicate via a braille keyboard.
 This app enabling using TTS & STT calibrated with standard braille keyboard.
 This project is part of a final computer engineering project in ben-gurion university Israel,
-in collaboration with the deaf-blind center in Israel.
+in collaboration with the deaf-blind center in Israel.  
+The project was chosen to represent the Department of Electrical and Computer Engineering on the day of presentation of the final projects, and was also awarded one of the "The audience's favorite projects".
 
-<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/poster.PNG" width="90%" height="90%">
+<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/poster.JPG" width="100%" height="100%">
 
 
 ### Abstract
@@ -28,12 +29,12 @@ Initial tests were performed with the deaf-blind community and the feedback were
 Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-Speech, Speech-to-Braille, accessibility indicators, Beit David Institute
 
 
-### Screenshots
-<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/1.png" width="30%" height="30%">
-
 ### Find more
-offical website of the product
+Offical website of the product - <a href="https://hawkingbgu.wixsite.com/application">link</a>  
 
+<a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking"><img src="http://www.mycalou.com/wp-content/uploads/2016/12/Google_Play_logo_2015.png" width="150">  </a>    
+The app in <a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking">Google Play</a>  
+Demo's video in Youtube - <a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber">link</a>  
 
 ### Authors
 *Maor Assayag*  
