@@ -15,10 +15,10 @@ The project was chosen to represent the Department of Electrical and Computer En
      
 #
 #
-<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/poster.JPG" width="90%" height="90%">  
-#  
-#  
+<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/poster.JPG" width="90%" height="90%"> 
   
+#
+#
 ### Abstract
 
 The increasing accessibility to today's smart technology enables the search for solutions for populations with different disabilities, such as deafness and blindness, to improve their lives. A deaf-blind person does not hear speech or see sign language,  therefore they are excluded from every framework, cut off from an accessible means of communication with the environment.
@@ -33,19 +33,23 @@ Initial tests were performed with the deaf-blind community and the feedback were
 
 Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-Speech, Speech-to-Braille, accessibility indicators, Beit David Institute
   
-  
+<br />
+<br />
 ### Offical website of the product  
-<a href="https://hawkingbgu.wixsite.com/application"><img src="https://weglot.com/wp-content/uploads/20190415174645/wix-logo2-1024x398.png" width="150"></a>   
+<a href="https://hawkingbgu.wixsite.com/application"><img src="https://weglot.com/wp-content/uploads/20190415174645/wix-logo2-1024x398.png" width="100"></a>   
   
-  
+<br />
+<br />
 ### Official Google Play Page  
 <a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking"><img src="http://www.mycalou.com/wp-content/uploads/2016/12/Google_Play_logo_2015.png" width="150"></a>   
   
-  
+<br />
+<br />
 ### Demo videos in Youtube  
-<a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="150"></a>   
+<a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="130"></a>   
   
-  
+ <br />
+ <br />
 ### Creators
 *Maor Assayag*  
 Computer Engineer, Ben-gurion University, Israel
@@ -59,5 +63,6 @@ Head of laboratort for autonomous robotics BGU
  		       
 *Dr. Luzzatto Ariel*  
 CTO at Melotec.lt & CEO at L&L Research
-
+<br />
+<br />
 ![Output sample](https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/eng_demo_1.gif)
