@@ -31,10 +31,10 @@ The system's features and interface support English & Hebrew, and the developmen
 
 Initial tests were performed with the deaf-blind community and the feedback were very positive and used to improve the application. Future work will be focused on porting the app for iOS and continue the design and development of a new portable braille keyboard that combines the layout of a standard keyboard (Write) and a braille display bar (Read) that can enable deaf-blind people to communicate more naturally and effectively.
 
-Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-Speech, Speech-to-Braille, accessibility indicators, Beit David Institute   
-  
-  
-  
+Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-Speech, Speech-to-Braille, accessibility indicators, Beit David Institute  
+
+#
+#
 #### Offical website of the product  
 <a href="https://hawkingbgu.wixsite.com/application"><img src="https://weglot.com/wp-content/uploads/20190415174645/wix-logo2-1024x398.png" width="80"></a>     
   
@@ -44,12 +44,11 @@ Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-S
 #### Demo videos in Youtube    
 <a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="100"></a>  
 
-#### User Guide in English   
-<a href="https://docs.wixstatic.com/ugd/ad58f8_1ee4c6fc55bc4c18a19138974ed04948.pdf?index=true"><img src="https://static.wixstatic.com/media/40d80b8089c8418a961cb75d96d491f7.png/v1/fill/w_71,h_96,al_c,q_80,usm_0.66_1.00_0.01/40d80b8089c8418a961cb75d96d491f7.webp" width="60"></a>  
+#### User Guide in <a href="https://docs.wixstatic.com/ugd/ad58f8_1ee4c6fc55bc4c18a19138974ed04948.pdf?index=true">English</a>  
 
-#### User Guide in Hebrew   
-<a href="https://docs.wixstatic.com/ugd/ad58f8_9534e1c7ff81401185ae0dcac1d3794d.pdf?index=true"><img src="https://static.wixstatic.com/media/40d80b8089c8418a961cb75d96d491f7.png/v1/fill/w_71,h_96,al_c,q_80,usm_0.66_1.00_0.01/40d80b8089c8418a961cb75d96d491f7.webp" width="60"></a>  
-
+#### User Guide in <a href="https://docs.wixstatic.com/ugd/ad58f8_9534e1c7ff81401185ae0dcac1d3794d.pdf?index=true">Hebrew</a>  
+#
+#
   
 ### Creators
 *Maor Assayag*  
