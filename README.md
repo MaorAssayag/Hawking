@@ -12,12 +12,12 @@ This project is part of a final computer engineering project in ben-gurion unive
 in collaboration with the deaf-blind center in Israel.  
 
 The project was chosen to represent the Department of Electrical and Computer Engineering on the day of presentation of the final projects, and was also awarded one of the "The audience's favorite projects".
-  
-    
-    
+     
+#
+#
 <img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/poster.JPG" width="100%" height="100%">
-
-  
+#
+#
   
 ### Abstract
 
@@ -35,14 +35,19 @@ Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-S
   
   
 ### Find more
-Offical website of the product - <a href="https://hawkingbgu.wixsite.com/application"><img src="https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=2ahUKEwjt5Y7HjJLjAhUHLFAKHSt7BOcQjRx6BAgBEAU&url=https%3A%2F%2Fweglot.com%2Fintegrations%2Fwix-multilingual-website%2F&psig=AOvVaw0w_OtA3AzPr0J-hODAR6JA&ust=1562014747793514
-" width="150"></a>    
-
-Official Google Play Page  <a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking"><img src="http://www.mycalou.com/wp-content/uploads/2016/12/Google_Play_logo_2015.png" width="150"></a>   
-
-Demo's video in Youtube - <a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="150"></a>   
-
-### Authors
+# Offical website of the product  
+<a href="https://hawkingbgu.wixsite.com/application"><img src="https://weglot.com/wp-content/uploads/20190415174645/wix-logo2-1024x398.png" width="150"></a>   
+  
+  
+# Official Google Play Page  
+<a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking"><img src="http://www.mycalou.com/wp-content/uploads/2016/12/Google_Play_logo_2015.png" width="150"></a>   
+  
+  
+# Demo videos in Youtube  
+<a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="150"></a>   
+  
+  
+### Creators
 *Maor Assayag*  
 Computer Engineer, Ben-gurion University, Israel
 
