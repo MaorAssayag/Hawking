@@ -10,13 +10,7 @@ This app enabling using TTS & STT calibrated with standard braille keyboard.
 This project is part of a final computer engineering project in ben-gurion university Israel,
 in collaboration with the deaf-blind center in Israel.
 
-![alt text](https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/background.PNG)
-
-![alt text](https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/6.png)
-
-![alt text](https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/useflow.PNG)
-
-![alt text](https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/frameworks.PNG)
+![alt text](https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/poster.PNG)
 
 ### Abstract
 
@@ -34,7 +28,7 @@ Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-S
 
 
 ### Screenshots
-<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/1.png" width="40%">
+<img src="https://github.com/MaorAssayag/Hawking/blob/master/readme%20assets/1.png" width="30%" height="30%">
 
 ### Find more
 offical website of the product
