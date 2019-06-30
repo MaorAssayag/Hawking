@@ -11,7 +11,7 @@ This app enabling using TTS & STT calibrated with standard braille keyboard.
 This project is part of a final computer engineering project in ben-gurion university Israel,
 in collaboration with the deaf-blind center in Israel.  
 
-The project was chosen to represent the Department of Electrical and Computer Engineering on the day of presentation of the final projects, and was also awarded one of the "The audience's favorite projects".
+**The project was chosen to represent the Department of Electrical and Computer Engineering on the day of presentation of the final projects**, and was also awarded one of the "The audience's favorite projects".
      
 #
 #
