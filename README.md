@@ -5,10 +5,11 @@
 ## A real-time communication system for deaf and blind people
 
 ### Short description
-Hawking was created to help people with struggle to communicate via a braille keyboard.
-This app enabling using TTS & STT calibrated with standard braille keyboard.  
+Hawking was created to enable deaf-blind people to coomunicate verbally with any person.  
 
-This project is part of a final computer engineering project in ben-gurion university Israel,
+The application can perform Speech-to-Braille and Braille-to-Speech operations in Hebrew & English with appropriate accessibility indicators so that the conversation is well executed and continuous for both the speaker and the deaf-blind person.  
+
+This project is part of a final computer engineering project in Ben-gurion university Israel,
 in collaboration with the deaf-blind center in Israel.  
 
 **The project was chosen to represent the Department of Electrical and Computer Engineering on the day of presentation of the final projects**, and was also awarded one of the "The audience's favorite projects".
@@ -35,6 +36,10 @@ Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-S
 
 #
 #
+#### User Guide in <a href="https://docs.wixstatic.com/ugd/ad58f8_1ee4c6fc55bc4c18a19138974ed04948.pdf?index=true">English</a>  
+
+#### User Guide in <a href="https://docs.wixstatic.com/ugd/ad58f8_9534e1c7ff81401185ae0dcac1d3794d.pdf?index=true">Hebrew</a>  
+
 #### Offical website of the product  
 <a href="https://hawkingbgu.wixsite.com/application"><img src="https://weglot.com/wp-content/uploads/20190415174645/wix-logo2-1024x398.png" width="80"></a>     
   
@@ -43,10 +48,6 @@ Keywords: deaf-blind, communication, application, Android, Braille, Braille-to-S
   
 #### Demo videos in Youtube    
 <a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="100"></a>  
-
-#### User Guide in <a href="https://docs.wixstatic.com/ugd/ad58f8_1ee4c6fc55bc4c18a19138974ed04948.pdf?index=true">English</a>  
-
-#### User Guide in <a href="https://docs.wixstatic.com/ugd/ad58f8_9534e1c7ff81401185ae0dcac1d3794d.pdf?index=true">Hebrew</a>  
 #
 #
   
