@@ -154,10 +154,9 @@ public class myServiceTrainMode extends Service {
             //String address = addresses.get(0).getAddressLine(0);
             String city = addresses.get(0).getLocality();
             //String knownName = addresses.get(0).getFeatureName();
-            // TEMP : replace with city name
-            if (!this.currentCity.equals("" + location.getLatitude())){
+            if (!this.currentCity.equals(city)){
                 //onMessage(city + location.getLatitude(), 2);
-                this.currentCity = "" + location.getLongitude();
+                this.currentCity = city;
                 SharedPreferences.Editor prefEditor = sharedPref.edit();
                 prefEditor.putString("currentCity","" + city);
                 prefEditor.apply();

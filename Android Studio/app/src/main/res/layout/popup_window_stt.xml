@@ -4,20 +4,21 @@
     android:layout_width="match_parent"
     android:id="@+id/popup_layout"
     android:background="?colorPopUpBackground"
-    android:layout_height="match_parent">
+    android:layout_alignParentBottom="true"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:gravity="center_horizontal|center_vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/popup_icon"
-            android:importantForAccessibility="no"
             android:layout_width="90dp"
             android:layout_height="100dp"
+            android:importantForAccessibility="no"
             android:scaleType="fitCenter"
             android:src="@drawable/nowifi_icon_popup" />
 
@@ -29,11 +30,11 @@
             android:gravity="center"
             android:paddingLeft="@dimen/ob_desc_padding"
             android:paddingRight="@dimen/ob_desc_padding"
-            android:textAllCaps="true"
-            android:textStyle="bold"
             android:text="@string/popup_title_STT"
+            android:textAllCaps="true"
             android:textColor="?colorPopUpText"
-            android:textSize="@dimen/ob_header_text_size" />
+            android:textSize="@dimen/ob_header_text_size"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/popup_description1"
@@ -49,28 +50,29 @@
 
         <Button
             android:id="@+id/popup_btn_settings_STT"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="?android:attr/borderlessButtonStyle"
             android:layout_marginTop="10dp"
-            android:textColor="?colorPopUpText"
-            android:text="@string/popup_btn_setting"
             android:drawableStart="@drawable/settings_icon_popup"
-            android:textSize="14sp"/>
-
-        <Button
-            android:id="@+id/popup_btn_close"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_marginTop="45dp"
-            android:layout_height="90dp"
-            android:gravity="center_vertical"
-            android:textAlignment="center"
-            android:background="?colorMyMessage"
-            android:text="@string/popup_btn_close"
-            android:textAllCaps="true"
+            android:text="@string/popup_btn_setting"
             android:textColor="?colorPopUpText"
-            android:textSize="@dimen/button_text" />
+            android:textSize="14sp" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/popup_btn_close"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:layout_alignParentBottom="true"
+        android:background="?colorMyMessage"
+        android:contentDescription="@string/popup_btn_close"
+        android:text="@string/popup_btn_close"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="?colorPopUpText"
+        android:textSize="@dimen/button_text" />
+
 </RelativeLayout>

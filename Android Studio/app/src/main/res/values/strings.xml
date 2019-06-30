@@ -4,10 +4,37 @@
     <string name="app_name_title">Hawking</string>
     <string name="TypeHint" translatable="false">Type your message</string>
     <string name="recognize_title">Recognition</string>
+    <string name="title_talk_mode_btn_on">turn on Talk mode</string>
+    <string name="title_talk_mode_btn_off">turn off Talk mode</string>
+    <string name="title_talk_mode_is_on">Talk mode is on</string>
+    <string name="title_talk_mode_is_off">Talk mode is off</string>
+    <string name="my_message_hint">Type</string>
+    <string name="send_message_btn">Send - </string>
+    <string name="my_message_disc">I said </string>
+    <string name="thier_message_disc">Recorded -</string>
+    <string name="read_check_disc">Next</string>
+    <string name="location_failed">Trying to connect</string>
+    <string name="audio_needed_title">Audio permission is needed</string>
+    <string name="audio_needed_summary">Speech Recognition need this permission. Conversation transcripts stay secure on your device</string>
+    <string name="audio_needed_ok">OK</string>
+    <string name="train_mode">Train mode</string>
+    <string name="train_mode_on">Turn on train mode</string>
+    <string name="train_mode_off">Turn off train mode</string>
+    <string name="record">record</string>
+    <string name="promot_stt">recording :</string>
+    <string name="error">Error</string>
+    <string name="stopped">stopped - </string>
+    <string name="system_offline">offline</string>
+    <string name="system_missing_language">Missing language, Download TTS Engine</string>
+    <string name="system_train_mode">offline or no gps</string>
+    <string name="system_SST_error">recording error - try again</string>
+    <string name="system">"System-  "</string>
+
 
     <!-- Settings Activity-->
     <string name="action_settings" translatable="false">Settings</string>
     <string name="title_activity_settings">Settings</string>
+
 
     <!-- General settings pref -->
     <string name="pref_title_general">General</string>
@@ -38,15 +65,20 @@
     <string name="summary_dark_mode">Change the contrast of text and background</string>
     <string name="key_dark_mode" translatable="false">key_dark_mode</string>
 
+
     <!-- STT settings pref -->
     <string name="pref_title_stt">Speech to Text</string>
-    <string name="title_stt_enable">STT shortcut</string>
-    <string name="summary_stt_enable">Choose how to start speech-recognition</string>
-    <string name="key_stt_enable" translatable="false">key_stt_enable</string>
+    <string name="title_stt_promoting">Voice promoting</string>
+    <string name="summary_stt_promoting">For example speech recognition will start with the device speak  &quot; recording &quot;</string>
+    <string name="key_allow_promoting" translatable="false">key_allow_promoting</string>
 
-    <string name="title_read_block">STT read blocking</string>
-    <string name="summary_read_block">Enable Speech recognition only after the last message has been read</string>
-    <string name="key_read_block" translatable="false">key_read_block</string>
+    <string name="title_train_mode_enable">Enable train mode</string>
+    <string name="summary_train_mode_enable">Enable train mode to appear in the top bar of the app</string>
+    <string name="key_train_mode_enable" translatable="false">key_train_mode_enable</string>
+
+    <string name="title_talk_mode_enable">Enable talk mode</string>
+    <string name="summary_talk_mode_enable">Enable talk mode to appear in the top bar of the app</string>
+    <string name="key_talk_mode_enable" translatable="false">key_talk_mode_enable</string>
 
     <string name="title_language_stt">STT Language</string>
     <string name="summary_language_stt">Choose the recognize speech language</string>
@@ -55,6 +87,10 @@
     <string name="title_settings_link_stt">STT Device Settings</string>
     <string name="summary_settings_link_stt">Open STT engine settings of your device</string>
     <string name="key_settings_link_stt" translatable="false">key_settings_link_stt</string>
+
+    <string name="title_enable_auto_scroll">Braille keyboard autoscroll</string>
+    <string name="summary_enable_auto_scroll">Enable auto focused on new SST mesages</string>
+    <string name="key_enable_auto_scroll" translatable="false">key_enable_auto_scroll</string>
 
     <!-- TTS settings pref -->
     <string name="pref_title_tts">Text to Speech</string>
@@ -91,6 +127,7 @@
     <string name="summary_settings_link_tts">Open TTS engine settings of your device</string>
     <string name="key_settings_link_tts" translatable="false">key_settings_link_tts</string>
 
+
     <!-- Pre-save Subscreen pref -->
     <string name="pref_title_subscreen">About pre-save sentences</string>
     <string name="title_presave_button_current">Current shortcut template</string>
@@ -101,7 +138,7 @@
     <string name="key_presave" translatable="false">key_presave</string>
 
     <string name="title_presave_1">Sentence 1</string>
-    <string name="summary_presave_1">Empty</string>
+    <string name="summary_presave_1">Hello, The device will speak what I will write, please wait for the beep to speak</string>
     <string name="title_presave_2">Sentence 2</string>
     <string name="summary_presave_2">Empty</string>
     <string name="title_presave_3">Sentence 3</string>
@@ -113,6 +150,7 @@
 
     <string name="no_such_shortcut">No such shortcut</string>
 
+
     <!-- About pref -->
     <string name="pref_header_about">About</string>
     <string name="summary_about">Hawking was created to help people with struggle to communicate via a braille keyboard.
@@ -122,15 +160,20 @@
     <string name="title_send_feedback">Send Feedback</string>
     <string name="title_faq">FAQ</string>
     <string name="summary_faq">View frequently asked questions</string>
-    <string name="url_faq" translatable="false">https://www.androidhive.info/privacy-policy/</string>
+    <string name="user_guide_eng">English User Guide</string>
+    <string name="url_eng_guide" translatable="false">http://bit.do/HawkingUserGuide</string>
+    <string name="user_guide_heb">Hebrew User Guide</string>
+    <string name="url_heb_guide" translatable="false">http://bit.do/HawkingUserGuideHebrew</string>
+    <string name="url_faq" translatable="false">https://hawkingbgu.wixsite.com/application</string>
     <string name="privacy_policy">Privacy Policy</string>
-    <string name="url_privacy" translatable="false">https://www.androidhive.info/privacy-policy/</string>
+    <string name="url_privacy" translatable="false">https://hawkingbgu.wixsite.com/application</string>
     <string name="title_terms">Terms &amp; Conditions</string>
-    <string name="url_terms" translatable="false">https://www.androidhive.info/terms-of-service/</string>
+    <string name="url_terms" translatable="false">https://hawkingbgu.wixsite.com/application</string>
     <string name="title_version">Version</string>
     <string name="choose_email_client">Choose email client</string>
     <string name="key_font_size" translatable="false">key_font_size</string>
     <string name="key_send_feedback" translatable="false">key_send_feedback</string>
+
 
     <!-- MainActivity use -->
     <string name="offline_stt_warning">Hebrew Speech Recognition is unavailable in offline mode !</string>
@@ -138,23 +181,27 @@
     <string name="en_tag" translatable="false">en-US</string>
     <string name="he_tag" translatable="false">he-IL</string>
 
+
     <!-- Introduction Activity use -->
     <string name="title_activity_introduction" translatable="false">IntroductionActivity</string>
 
+
     <!-- OnBoard Screen. -->
+    <string name="ob_header0">Welcome to Hawking !</string>
     <string name="ob_header1">Text To Speech</string>
     <string name="ob_header2">Speech To Text</string>
     <string name="ob_header3">Bluetooth Connection</string>
     <string name="ob_header4">Train mode</string>
     <string name="ob_get_started">GET STARTED</string>
+    <string name="ob_desc0">User guides in Hebrew &amp; English available in the app settings</string>
     <string name="ob_desc1">Speak messages on your behalf with appropriate accessibility indications</string>
     <string name="ob_desc2">Recognize the surroundings voices on your behalf in English &amp; Hebrew</string>
     <string name="ob_desc3">If needed, you can Read &amp; Write with a standard braille keyboard via Bluetooth</string>
-    <string name="ob_desc4">Informs you when the train enters a new city using GPS or Internet connection.</string>
+    <string name="ob_desc4">Informs you when the train enters a new city using GPS or Internet connection</string>
 
     <string name="popup_title_STT">Offline</string>
     <string name="popup_description_STT">You appeared to be offline. Try to add the chosen STT language in the device Offline Speech Recognition settings.</string>
-    <string name="popup_btn_close">close</string>
+    <string name="popup_btn_close">Try again</string>
     <string name="popup_btn_setting">device settings</string>
 
     <string name="popup_title_TTS">Missing language</string>
@@ -165,19 +212,11 @@
     <string name="popup_description_train_mode">Train mode requires GPS or Internet connection. Please try to enable GPS or connect to a Network.</string>
     <string name="popup_btn_gps">GPS settings</string>
 
-    <string name="my_message_hint">Type</string>
-    <string name="send_message_btn">Send</string>
-    <string name="my_message_disc">I said</string>
-    <string name="thier_message_disc">Recognize</string>
-    <string name="read_check_disc">Next</string>
+    <string name="pref_title_talkback">Fix TalkBack</string>
+    <string name="key_talkback" translatable="false">key_talkback</string>
+    <string name="summary_talkback">Mute TalkBack while in app to prevent interfering with the TTS services, for Android 8.0 and up mute Accessibility stream volume.</string>
 
-    <string name="location_failed">Trying to connect</string>
-
-    <string name="audio_needed_title">Audio permission is needed</string>
-    <string name="audio_needed_summary">Speech Recognition need this permission. Conversation transcripts stay secure on your device</string>
-    <string name="audio_needed_ok">Ok</string>
-
-    <string name="train_mode">Train mode</string>
-
-
+    <string name="pref_title_fix_hebrew_braille">Fix Hebrew Braille</string>
+    <string name="key_fix_hebrew_braille" translatable="false">key_fix_hebrew_braille</string>
+    <string name="summary_fix_hebrew_braille">Enable the app to fix the braille input encoding from a Braille Keyboard to Hebrew Braille</string>
 </resources>

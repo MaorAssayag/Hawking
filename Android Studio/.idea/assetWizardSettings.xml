@@ -35,7 +35,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/image/ic_brightness_3_black_24dp.xml" />
+                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/communication/ic_textsms_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -56,11 +56,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="assetType" value="IMAGE" />
                                       <entry key="imageAsset" value="C:\Users\MaorA\Desktop\Hawking\app\src\main\train1.png" />
-                                      <entry key="outputName" value="train1_on" />
+                                      <entry key="outputName" value="ic_auto_scroll" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="ad8c00" />
+                                      <entry key="themeColor" value="adbab9" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -131,7 +130,40 @@
         </entry>
         <entry key="vectorWizard">
           <value>
-            <PersistentState />
+            <PersistentState>
+              <option name="children">
+                <map>
+                  <entry key="vectorAssetStep">
+                    <value>
+                      <PersistentState>
+                        <option name="children">
+                          <map>
+                            <entry key="clipartAsset">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/editor/ic_bubble_chart_black_24dp.xml" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                        <option name="values">
+                          <map>
+                            <entry key="color" value="a6b0b0" />
+                            <entry key="outputName" value="ic_allow_promoting" />
+                            <entry key="sourceFile" value="C:\Users\MaorA" />
+                          </map>
+                        </option>
+                      </PersistentState>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </PersistentState>
           </value>
         </entry>
       </map>

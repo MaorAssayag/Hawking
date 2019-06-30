@@ -17,6 +17,7 @@
         <EditTextPreference
             android:key="pref_presave_1"
             android:summary="@string/summary_presave_1"
+            android:defaultValue="@string/summary_presave_1"
             android:title="@string/title_presave_1"
             android:dialogTitle="@string/title_presave_dialog"/>
 

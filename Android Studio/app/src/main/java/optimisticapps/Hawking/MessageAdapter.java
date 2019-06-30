@@ -180,9 +180,24 @@ public class MessageAdapter extends BaseAdapter {
             holder.messageBody = convertView.findViewById(R.id.message_body);
             convertView.setTag(holder);
             holder.messageBody.setText(customMessage.getText());
+            holder.messageBody.setContentDescription(context.getString(R.string.my_message_disc) + customMessage.getText());
             //holder.messageBody.setContentDescription(message.getText()); // Label for Accessibility
             holder.messageBody.setTextSize(font_size);
             last_user_message = customMessage.getText();
+            if (enable_bold)
+                holder.messageBody.setTypeface(null, Typeface.BOLD);
+
+        } else if (customMessage.getData().getName().equals("System")){ // system messages when braille keyboard is connected
+            convertView = messageInflater.inflate(R.layout.their_message, null);
+            //holder.name =  convertView.findViewById(R.id.name);
+            holder.messageBody = convertView.findViewById(R.id.message_body);
+            holder.readCheck = convertView.findViewById(R.id.read_check);
+            convertView.setTag(holder);
+            //holder.name.setText(customMessage.getData().getName());
+            holder.messageBody.setText(customMessage.getText());
+            holder.messageBody.setContentDescription(context.getString(R.string.system) + customMessage.getText());
+            holder.messageBody.setTextSize(font_size);
+            //holder.messageBody.setContentDescription(message.getText()); // Label for Accessibility
             if (enable_bold)
                 holder.messageBody.setTypeface(null, Typeface.BOLD);
 
@@ -194,6 +209,7 @@ public class MessageAdapter extends BaseAdapter {
             convertView.setTag(holder);
             //holder.name.setText(customMessage.getData().getName());
             holder.messageBody.setText(customMessage.getText());
+            holder.messageBody.setContentDescription(context.getString(R.string.thier_message_disc) + customMessage.getText());
             holder.messageBody.setTextSize(font_size);
             //holder.messageBody.setContentDescription(message.getText()); // Label for Accessibility
             if (enable_bold)

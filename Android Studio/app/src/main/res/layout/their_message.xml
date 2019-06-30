@@ -20,7 +20,6 @@
         android:textStyle="normal"
         android:textColor="?android:attr/textColorPrimary"
         android:text="Placeholder message"
-        android:onClick="updateCheckRead"
         android:textSize="18sp" />
 
     <ImageView

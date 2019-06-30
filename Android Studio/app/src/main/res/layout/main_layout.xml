@@ -30,7 +30,8 @@
 
         <com.github.zagum.speechrecognitionview.RecognitionProgressView
             android:id="@+id/recognition_view"
-            android:importantForAccessibility = "no"
+            android:contentDescription="@string/record"
+            android:importantForAccessibility="yes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -67,9 +68,10 @@
             android:layout_marginEnd="10dp"
             android:layout_height="wrap_content"
             android:maxHeight="150dp"
+            android:hint="@string/my_message_hint"
             android:layout_weight="1"
             android:focusable="true"
-            android:hint="@string/my_message_hint"
+            android:clickable="true"
             android:textStyle="bold"
             android:inputType="textMultiLine"
             android:background="@android:color/transparent"
@@ -93,15 +95,16 @@
             android:layout_height="65dp"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="0dp"
+            android:contentDescription="@string/send_message_btn"
             app:pv_alpha="150"
             app:pv_color="?colorPulseViewSendMessage"
-            app:pv_count="1"
+            app:pv_count="2"
             app:pv_icon="@drawable/megaphone"
             app:pv_icon_height="50dp"
             app:pv_icon_width="68dp"
             app:pv_interpolator="@android:anim/accelerate_decelerate_interpolator"
             app:pv_measure="height"
-            app:pv_spawn_period="800" />
+            app:pv_spawn_period="1500" />
     </LinearLayout>
 
 </RelativeLayout>

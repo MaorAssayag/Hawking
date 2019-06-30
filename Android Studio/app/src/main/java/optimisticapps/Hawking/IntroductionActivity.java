@@ -85,9 +85,9 @@ public class IntroductionActivity extends AppCompatActivity {
 
     // Load data into the viewpager
     public void loadData() {
-        int[] header = {R.string.ob_header1, R.string.ob_header2, R.string.ob_header3, R.string.ob_header4};
-        int[] desc = {R.string.ob_desc1, R.string.ob_desc2, R.string.ob_desc3, R.string.ob_desc4};
-        int[] imageId = {R.drawable.onboard_image1, R.drawable.onboard_image2, R.drawable.onboard_image3, R.drawable.onboard_image4};
+        int[] header = {R.string.ob_header0, R.string.ob_header1, R.string.ob_header2, R.string.ob_header3, R.string.ob_header4};
+        int[] desc = {R.string.ob_desc0, R.string.ob_desc1, R.string.ob_desc2, R.string.ob_desc3, R.string.ob_desc4};
+        int[] imageId = {R.drawable.onboard_image0, R.drawable.onboard_image1, R.drawable.onboard_image2, R.drawable.onboard_image3, R.drawable.onboard_image4};
 
         for(int i=0;i<imageId.length;i++) {
             OnBoardItem item=new OnBoardItem();

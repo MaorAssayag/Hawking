@@ -2,7 +2,7 @@ package optimisticapps.Hawking;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
+import android.app.Instrumentation;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +13,10 @@ import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.preference.PreferenceManager;
@@ -26,18 +28,18 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
+import android.view.ViewTreeObserver;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
 import android.view.inputmethod.InputMethodManager;
-import android.view.textservice.SentenceSuggestionsInfo;
-import android.view.textservice.SpellCheckerSession;
-import android.view.textservice.SuggestionsInfo;
-import android.view.textservice.TextInfo;
-import android.view.textservice.TextServicesManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -54,6 +56,7 @@ import android.os.Vibrator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *   _   _                      _      _
@@ -79,12 +82,12 @@ import java.util.Locale;
  * Supervisors: Prof. Guterman Hugo
  * 		        Dr. Luzzatto Ariel
  *
- * @version 1.0
+ * @version 1.2
  *
  * Main Activity
  */
 
-public class MainActivity extends AppCompatActivity implements SpellCheckerSession.SpellCheckerSessionListener {
+public class MainActivity extends AppCompatActivity {
 
     /**
      * General
@@ -100,12 +103,18 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
     private static final int REQUEST_LOCATION_PERMISSION_CODE = 2;
     private RecognitionProgressView recognitionProgressView; //Custom speech-wave view from : com.github.zagum.speechrecognitionview
     private TextToSpeech tts; //Text-To-Speech object. handles all tts operations
-    private final int THRESH_HOLD_RECOGNITION = 1;
     private PulseView pulseView_train;
+    private PulseView pulseView_talk_mode;
     private PulseView pulseView_sendMessage;
-    public static double chat_messages_limit = 40;
-    private boolean now_invisible = false;
-    private SpellCheckerSession mScs;
+    public static double chat_messages_limit = 5; // the actual number is dynamic as a factor of the font size
+    private boolean inputHintInvisible = false; // used for font size adjustments
+    private AudioManager mAudioManager; // Used to control the audio streams
+    KeyCodeEng2Heb keyCodeEng2Heb; // Detecting hardware key strokes in Hebrew
+    BrailleEng2Heb brailleEng2Heb; // Fixing support for Hebrew Braille typing with Braille Keyboard
+    private AtomicBoolean messageFromSTT; // Does the last message was from an SST ?
+    boolean isDeviceTalkBackON = false; // Does the TalkBack in Device settings is turn ON ?
+    boolean isBrailleBackON = false; // Does the BrailleBack in Device settings is turn ON ?
+    int promoting_delay = 200; // 200ms delay for voice action promotion
 
     /**
      * User settings
@@ -122,31 +131,38 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
     private boolean enable_bold = true; // enable bold text in chat
     private boolean repeat_on_blank = false; // repeat speaking the last message sent by the user when the user send a blank message
     private boolean repeat_on_longpress = true; // repeat the current long-pressed message
-    private boolean dark_mode = false;
+    private boolean dark_mode = false; // enable dark mode theme
+    private boolean allow_to_promote = true; // enable promoting the action in the app such as : the device will say "recording" in the start of STT
+    private boolean train_mode_visibility = true; // enable train mode icon in the action bar
+    private boolean talk_mode_visibility = true; // enable talk mode icon in the action bar
+    private boolean fix_talkback = false; // debug mode
+    private boolean fix_braille_hebrew = true; // BrailleBack doesnt support Hebrew encoding
+    private boolean enable_auto_scroll = true;
 
     /**
      * Progress-boolean
      */
     public boolean recognizeSpeech = false;// Currently a switch to block/non-block the stt operations. Could be the user firing the app or press a button.
-    private boolean doneReading = true; // does the user read the last x messages ? (default x = 2). block/non-block stt operations.
     private boolean clear_speech_recognition = false; // does the user want to speak right now (so the stt operation will be stopped & cleaned)
-    public int recognitionMessagesCount = 0; // how many un-read messages for the user ?
     private boolean isListening = false; // doest the stt currently operating (actively listening)
-    private boolean unavailable_stt = false; // if the current desired language of speech to be detected is unavailable
     private boolean first_time_after_closed_app = false;  // used to edit the pref-shared setting file and add the current font to it
+    private boolean talk_mode = true; // are we in talk mode by default
+    private boolean promoting = false; // are we currently under TTS to promote an action ?
 
     /**
      * Vibration
      */
     private Vibrator vibrator;  // Vibrator object, used to notify the user on on-going events (currently speaks, wrong settings etc)
-    long[] pattern_heart_beat = {0, 100, 200, 125, 900, 100, 200, 100}; //Pattern of vibration 1
+    long[] pattern_heart_beat = {0, 100, 200, 100, 200, 100, 200, 100}; //Pattern of vibration 1
     long[] pattern_wrong = {50, 100, 50, 100}; //Pattern of vibration 2
-    long[] pattern_received = {50, 100, 200, 125, 200, 125, 200}; //Pattern of vibration 2
+    long[] pattern_received = {0,100,400,100}; //Pattern of vibration 2 for STT
+    long[] pattern_new_message = {0, 300, 100, 300, 100, 300}; //Pattern of vibration 2 for STT
 
     /**
      * POP UP messages
      */
     RelativeLayout mRelativeLayout;
+    int mRelativeLayout_height;
     public static final String PACKAGE_NAME_GOOGLE_NOW = "com.google.android.googlequicksearchbox";
     public static final String ACTIVITY_INSTALL_OFFLINE_FILES = "com.google.android.voicesearch.greco3.languagepack.InstallActivity";
 
@@ -155,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
      */
     private boolean train_mode_status = false;
     private boolean requestingLocationUpdates = false;
-    private String currentCity;
 
     /**
      * Service communication
@@ -191,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
             return;
         }
 
+        // Message handling from the Train mode service
         messageHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
@@ -216,21 +232,41 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
         // General
         setContentView(R.layout.main_layout);
         myMessageText = findViewById(R.id.MessageInputText);
+        // start the app with write mode
+        myMessageText.requestFocus();
+        // if talk mode is on then the user using braille keyboard, enable them to click Enter on the message input
         myMessageText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
+            // if the user press the 'Enter' button on the in-display keyboard, send the message
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                // if the user press the 'ok' button on the in-display keyboard, send the message
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    sendMessage(findViewById(R.id.sendImageButton));
+                if (isDeviceTalkBackON){
+                    String messageToSpeak = myMessageText.getText().toString();
+                    if (messageToSpeak.length() > 0){
+                        // speak the message
+                        // NOTE : here our braille keyboard showed device ID = -1 : its probably a BrailleBack thing,
+                        // while the blutetooth keyboard showed real deviceID (=10 for e.g.)
+                        if (tts_language.equals("he-IL") && isBrailleBackON && fix_braille_hebrew && event.getDeviceId() == -1){
+                            messageToSpeak = brailleEng2Heb.convert(messageToSpeak);
+                        }
+                        sendMessage(messageToSpeak);
+                    } else{
+                        // start recording
+                        switchRecognition(null);
+                    }
+                    return true;
                 }
                 return false;
             }
         });
-        myMessageText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        myMessageText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    hideKeyboard(v);
+            public void afterTextChanged(Editable s) {}
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() > 0 && !myMessageText.isAccessibilityFocused()){
+                    myMessageText.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
                 }
             }
         });
@@ -240,7 +276,8 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
         messageAdapter = new MessageAdapter(this, current_font_size, enable_bold);
         messagesView = findViewById(R.id.messages_view);
         messagesView.setAdapter(messageAdapter);
-        // when the user long-pressed on a message, repeat the message
+
+        // When the user long-pressed on a message, repeat the message
         messagesView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
@@ -253,9 +290,6 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
             }
         });
 
-        // Message spelling correction init
-        //updateSpellChecker();
-
         // Voice wave initialize
         intent_recognize = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent_recognize.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -266,16 +300,31 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
         recognitionProgressView.setRecognitionListener(new RecognitionListenerAdapter() {
             @Override
             public void onResults(Bundle results) {
+                isListening = false;
                 Log.i(LOG_TAG, "onResults");
+                vibrator.cancel();
                 showResults(results);
+                super.onResults(results);
+            }
+
+            @Override
+            public void onPartialResults(Bundle partialResults) {
+                Log.i(LOG_TAG, "onResults");
+                vibrator.cancel();
+                showResults(partialResults);
+                super.onPartialResults(partialResults);
             }
 
             @Override
             public void onError(int error) {
                 String errorMessage = getErrorText(error);
-                Log.d(LOG_TAG, "FAILED " + errorMessage);
+                Log.d(LOG_TAG, "SST FAIL " + errorMessage);
                 if (error != SpeechRecognizer.ERROR_CLIENT) {
                     Toast.makeText(MainActivity.this, "FAILED " + errorMessage, Toast.LENGTH_SHORT).show();
+                    if(isDeviceTalkBackON){
+                        onMessage(getString(R.string.system_SST_error),4);
+                    }
+                    vibrator.cancel();
                     vibrator.vibrate(pattern_wrong, -1);
                     setRecognizeSpeech();
                 }
@@ -295,6 +344,7 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
         int multi = 3;
         int[] heights = {multi * 16, multi * 23, multi * 16, multi * 22, multi * 18};
         recognitionProgressView.setBarMaxHeightsInDp(heights);
+
         //recognitionProgressView.setSpacingInDp(2);
         //recognitionProgressView.setIdleStateAmplitudeInDp(2);
         //recognitionProgressView.setRotationRadiusInDp(10);
@@ -320,26 +370,112 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
         tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
             @Override
             public void onStart(String utteranceId) {
-                if (allow_to_vibrate) {
-                    vibrator.vibrate(pattern_heart_beat, 0);
-                }
-                pulseView_sendMessage.startPulse();
-            }
+                // User-settings : if max volume is enabled in app settings - speak with the max volume
+                if (max_volume_enable){
+                    AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                    am.setStreamVolume(AudioManager.STREAM_MUSIC,am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
 
+                    // User-settings : if fix talkback is on then we mute the music stream, need to unmute for TTS
+                    //&& Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                } else if (fix_talkback){
+                    mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
+                }
+
+                if (!promoting){
+                    if (allow_to_vibrate) {
+                        vibrator.vibrate(pattern_heart_beat, -1);
+                    }
+                    //pulseView_sendMessage.startPulse();
+                }
+            }
             @Override
             public void onDone(String utteranceId) {
-                // Speaking stopped.
-                vibrator.cancel();
-                if (isListening) {
-                    startRecognition();
+                // User-settings : if fix talkback is on then we mute the music stream, need to unmute for TTS
+                //&& Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                if (fix_talkback){
+                    mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
                 }
-                pulseView_sendMessage.finishPulse();
-            }
 
+                // if the current TTS was a promotion of starting STT
+                if (promoting){
+                    startRecognitionPromote();
+                }else{
+
+                    // we spoke the message and THEN send it to the UI chat message
+                    // && Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                    if (fix_talkback) {
+                        onMessage(utteranceId, 1);
+                    }
+
+                    // Speaking finished
+                    vibrator.cancel();
+                    pulseView_sendMessage.finishPulse();
+                    if (talk_mode){
+                        final String message_to_speak = getString(R.string.promot_stt); // ="Recording"
+                        promoting = true;
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            public void run() {
+                                tts.speak(message_to_speak, TextToSpeech.QUEUE_FLUSH, null, message_to_speak);
+                                Log.i(LOG_TAG, "spoke :" + message_to_speak);
+                            }
+                        }, promoting_delay);
+
+//                        isListening = true;
+//                        recognizeSpeech = true;
+//                        startRecognition();
+                    }
+                }
+            }
+            @Override
+            public void onStop(String utteranceId, boolean interrupted) {
+                // User-settings : if fix talkback is on then we mute the music stream, need to unmute for TTS
+                // && Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                if (fix_talkback){
+                    mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+                    if (! promoting){
+                        // we spoke the message and THEN send it to the UI chat message
+                        onMessage(getString(R.string.stopped) + utteranceId, 1);
+                    }
+                }
+
+                // if the current TTS was a promotion of starting STT
+                if (promoting){
+                    startRecognitionPromote();
+                }else {
+                    // Speaking stopped from something unexpected
+                    vibrator.cancel();
+                    vibrator.vibrate(pattern_wrong, -1);
+                    pulseView_sendMessage.finishPulse();
+                    if (talk_mode) {
+                        final String message_to_speak = getString(R.string.promot_stt); // ="Recording"
+                        promoting = true;
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            public void run() {
+                                tts.speak(message_to_speak, TextToSpeech.QUEUE_FLUSH, null, message_to_speak);
+                                Log.i(LOG_TAG, "spoke :" + message_to_speak);
+                            }
+                        }, promoting_delay);
+//                        isListening = true;
+//                        recognizeSpeech = true;
+//                        startRecognition();
+                    }
+                }
+            }
             @Override
             public void onError(String utteranceId) {
-                Log.i(LOG_TAG, "onError: ");
-                // Error section
+                // User-settings : if fix talkback is on then we mute the music stream, need to unmute for TTS
+                // && Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                if (fix_talkback){
+                    mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+                    if (! promoting){
+                        // we spoke the message and THEN send it to the UI chat message
+                        onMessage(getString(R.string.error), 1);
+                    }
+                }
+
+                Log.i(LOG_TAG, "onError TTS");
+                vibrator.cancel();
+                pulseView_sendMessage.finishPulse();
             }
         });
 
@@ -353,11 +489,49 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
 
         this.first_time_after_closed_app = true;
         mRelativeLayout = findViewById(R.id.main_layout);
+
+        // this method gains the main layout pixels height to help render later the pop-up windows nicely
+        // it will be called only after the first entrance to the app / changing themes
+        mRelativeLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mRelativeLayout_height = mRelativeLayout.getHeight();
+                mRelativeLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
+        // pulse views
         pulseView_train = findViewById(R.id.pv_train);
         pulseView_train.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startTrainMode(v);
+            }
+        });
+
+        // Talk mode enable continuous conversation, TTS -> SST -> TTS..
+        pulseView_talk_mode = findViewById(R.id.pv_talk_mode);
+        pulseView_talk_mode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                talk_mode = !talk_mode;
+                if(talk_mode){
+                    pulseView_talk_mode.setIconRes(R.drawable.ic_talk_mode_on);
+                    //pulseView_talk_mode.startPulse();
+                    pulseView_talk_mode.setContentDescription(getString(R.string.title_talk_mode_btn_off));
+                    //Note : talkback will re-read the content description and this promotion will not be spoken
+                    if (allow_to_promote){
+                        speakTTSmessage(getString(R.string.title_talk_mode_is_on));
+                    }
+                }else{
+                    pulseView_talk_mode.setIconRes(R.drawable.ic_talk_mode);
+                    pulseView_talk_mode.finishPulse();
+                    pulseView_talk_mode.setContentDescription(getString(R.string.title_talk_mode_btn_on));
+                    //Note : talkback will re-read the content description and this promotion will not be spoken
+                    if (allow_to_promote){
+                        speakTTSmessage(getString(R.string.title_talk_mode_is_off));
+                    }
+                }
             }
         });
 
@@ -368,8 +542,124 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
                 sendMessage(v);
             }
         });
+
         // limit the chat view to avoid loading big chunks of data & security
-        chat_messages_limit = 50 - current_font_size * 0.3;
+        //chat_messages_limit = 50 - current_font_size * 0.3;
+
+        // Try to fix TalkBack interfering with TTS
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        // Hash map to convert English chars to Hebrew & English key codes to Hebrew
+        keyCodeEng2Heb = new KeyCodeEng2Heb();
+        brailleEng2Heb = new BrailleEng2Heb();
+
+        AccessibilityManager am = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
+        // is TalkBack is ON in the device settings ? if so we are dealing with blind/deaf-blind
+        isDeviceTalkBackON = am.isTouchExplorationEnabled();
+        if (isDeviceTalkBackON){
+            messagesView.setClickable(false);
+            pulseView_sendMessage.setEnabled(false);
+            pulseView_sendMessage.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        } else{
+            messagesView.setClickable(true);
+            pulseView_sendMessage.setEnabled(true);
+            pulseView_sendMessage.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+        }
+
+        // Is BrailleBack is On on the device settings ? if yes then we are dealing with Braille Keyboard
+        isBrailleBackON = isAccessibilityServiceEnabled(this, "com.googlecode.eyesfree.brailleback");
+        messageFromSTT = new AtomicBoolean(false);
+    }
+
+    /**
+     * Check if BrailleBack service is ON in the device settings, meaning the user operate with a Braille Keyboard
+     * @param context
+     * @param accessibilityService
+     * @return if BrailleBack service is ON
+     */
+    public static boolean isAccessibilityServiceEnabled(Context context, String accessibilityService) {
+        String enabledServicesSetting = Settings.Secure.getString(context.getContentResolver(),  Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+        if (enabledServicesSetting == null)
+            return false;
+
+        TextUtils.SimpleStringSplitter colonSplitter = new TextUtils.SimpleStringSplitter(':');
+        colonSplitter.setString(enabledServicesSetting);
+
+        while (colonSplitter.hasNext()) {
+            String componentNameString = colonSplitter.next();
+            ComponentName enabledService = ComponentName.unflattenFromString(componentNameString);
+            if (enabledService != null && enabledService.getPackageName().equals(accessibilityService))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Called when a key up event has occurred.
+     * Called when a key was pressed down and not handled by
+     * any of the views inside of the activity.
+     * We used it to catch 'ENTER' key strokes on the braille/regular bluetooth keyboard
+     *
+     * @param keyCode key stroke code
+     * @param event event info
+     * @return If you handled the event, return true.
+     * If you want to allow the event to be handled by the next receiver, return false.
+     */
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (this.isDeviceTalkBackON && keyCode == KeyEvent.KEYCODE_ENTER){
+
+            //simulate pressing on the Recognition button
+            switchRecognition(null);
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+
+    /**
+     * Called when a key up event has occurred.
+     * Called when a key was pressed down and not handled by
+     * any of the views inside of the activity.
+     * We used it to catch 'ENTER' key strokes on the braille/regular bluetooth keyboard
+     *
+     * @param keyCode key stroke code
+     * @param event event info
+     * @return If you handled the event, return true.
+     * If you want to allow the event to be handled by the next receiver, return false.
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (this.isDeviceTalkBackON && keyCode >= KeyEvent.KEYCODE_A && keyCode <= KeyEvent.KEYCODE_Z) {
+            // When the user center presses, let them pick a contact.
+            if(!myMessageText.isAccessibilityFocused() || !myMessageText.hasFocus()){
+                myMessageText.requestFocus();
+                myMessageText.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+                // 'a' ascii = 97 (so we need to add 68 to KEYCODE_A=29)
+                int char_ascii = keyCode + 68;
+                if (tts_language.equals("he-IL")){
+                    String newString;
+                    // if its directly from the braille keyboard translate eng to heb braille
+                    // NOTE : here our braille keyboard showed device ID = -1 : its probably a BrailleBack thing,
+                    // while the blutetooth keyboard showed real deviceID (=10 for e.g.)
+                    if (isBrailleBackON && fix_braille_hebrew && event.getDeviceId() == -1){
+                        newString = brailleEng2Heb.convert(Character.toString((char)char_ascii));
+                    }
+                    // its from a bluetooth keyboard, translate accordingly to QWERTY layout
+                    else{
+                        newString = myMessageText.getText().toString() + keyCodeEng2Heb.convert(Character.toString((char)char_ascii));
+                    }
+                    myMessageText.setText(newString);
+                } else{
+                    String newString = myMessageText.getText().toString() + Character.toString((char)char_ascii);
+                    myMessageText.setText(newString);
+                }
+                myMessageText.setSelection(1);
+            }
+            return true;
+        }
+        Log.i("KEY_DOWN_TAG", "onKeyDown: " + keyCode);
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -390,13 +680,13 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
      * and in the first time that app is running.
      * <p>
      * If the current desired language of speech to be detected is unavailable,
-     * this.unavailable_stt will be false and the user will get a warning Toast
+     * unavailable_stt will be false and the user will get a warning Toast
      * with a 'wrong' vibrate.
      * <p>
      * In addition, this method responsible for the speech-wave view animation to be started.
      * <p>
      * this.recognizeSpeech : if the user allow speech recognition (e.g. a button)
-     * this.unavailable_stt : if the current desired language of speech to be detected is unavailable
+     * unavailable_stt : if the current desired language of speech to be detected is unavailable
      */
     private void startRecognition() {
         if (recognizeSpeech) {
@@ -410,12 +700,18 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
                         REQUEST_RECORD_AUDIO_PERMISSION_CODE);
 
             } else {
-                this.unavailable_stt = this.stt_language.equals("he-IL") && !isNetworkAvailable();
+                // if the current desired language of speech to be detected is unavailable
+                boolean unavailable_stt = this.stt_language.equals("he-IL") && !isNetworkAvailable();
 
-                if (this.unavailable_stt) {
+                if (unavailable_stt) {
                     vibrator.vibrate(pattern_wrong, -1);
-                    offlinePopUpWindows();
+                    if (this.isDeviceTalkBackON){
+                        onMessage(getString(R.string.system_offline),4);
+                    }else{
+                        offlinePopUpWindows();
+                    }
                 } else {
+                    vibrator.vibrate(pattern_received, -1);
                     recognitionProgressView.stop();
                     recognitionProgressView.play();
                     recognitionProgressView.postDelayed(new Runnable() {
@@ -445,11 +741,61 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
      * @param view - speech-wave view on the UI
      */
     public void switchRecognition(View view) {
-        this.recognizeSpeech = !this.recognizeSpeech;
-        if (this.recognizeSpeech && this.doneReading) {
-            this.isListening = true;
-            startRecognition();
+//        this.recognizeSpeech = !this.recognizeSpeech;
+//        if (this.recognizeSpeech && this.doneReading) {
+//            this.isListening = true;
+//            startRecognition();
+//        }
+        // if the TTS is talking, we can't record
+        if (this.tts.isSpeaking()){
+            // vibrate wrong pattern
+            vibrator.vibrate(pattern_wrong, -1);
+        } else{
+            if (allow_to_promote){
+                // if allowed to TTS, speak the promotion to STT recording
+                // from the STT it will call startRecognition()
+                if (this.isListening){
+                    clear_speech_recognition = true;
+                    speechRecognizer.stopListening();
+                }
+                // Check if the language is unavailable
+                final Locale new_locale = Locale.forLanguageTag(this.tts_language);
+                if (tts.isLanguageAvailable(new_locale) < 0){
+                    vibrator.vibrate(pattern_wrong, -1);
+                    if (this.isDeviceTalkBackON){
+                        onMessage(getString(R.string.system_missing_language),4);
+                    }else{
+                        TTSPopUpWindows();
+                    }
+                } else {
+                    String message_to_speak = getString(R.string.promot_stt); // ="Recording"
+                    this.promoting = true;
+                    tts.speak(message_to_speak, TextToSpeech.QUEUE_FLUSH, null, message_to_speak);
+                    Log.i(LOG_TAG, "spoke :" + message_to_speak);
+                }
+            }
+            else{
+                this.isListening = true;
+                this.recognizeSpeech = true;
+                startRecognition();
+            }
         }
+    }
+
+    /**
+     * startRecognitionPromote
+     * aid function for tts listener to start STT services after promiting it (e.g. "recording")
+     */
+    private void startRecognitionPromote(){
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            public void run() {
+                promoting = false;
+                isListening = true;
+                recognizeSpeech = true;
+                clear_speech_recognition = false;
+                startRecognition();
+            }
+        }, promoting_delay);
     }
 
     /**
@@ -463,7 +809,6 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
      * @param results - voice recognition results (Currently Google SpeechRecognition API)
      */
     private void showResults(Bundle results) {
-        this.isListening = false;
         if (clear_speech_recognition) {
             // just ignore captured voices
             clear_speech_recognition = false;
@@ -474,16 +819,6 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
                     .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             // Add the message to the chat
             onMessage(matches.get(0), 2);
-            recognitionMessagesCount++;
-            if (recognitionMessagesCount < THRESH_HOLD_RECOGNITION) {
-                // if the user done read at lease before the THRESH_HOLD_RECOGNITION fresh messages - enable speech recognition again
-                this.doneReading = true;
-                this.isListening = true;
-                startRecognition();
-                // place for voice notation
-            } else {
-                this.doneReading = false;
-            }
         }
     }
 
@@ -498,16 +833,16 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
         startActivity(new Intent(MainActivity.this, SettingsPrefActivity.class));
     }
 
-    /**
-     * updateCheckRead
-     * This method currently will be called from pressing one-time on Recognition message.
-     * The main idea is to give the user control of the input flow of the conversation,
-     * and continue it only when he is ready - a fundamental principle when we talk about
-     * streaming the recognize input to a braille keyboard.
-     *
-     * @param view - onClickListener to any Recognize message from the chat
-     */
-    public void updateCheckRead(View view) {
+//    /**
+//     * updateCheckRead
+//     * This method currently will be called from pressing one-time on Recognition message.
+//     * The main idea is to give the user control of the input flow of the conversation,
+//     * and continue it only when he is ready - a fundamental principle when we talk about
+//     * streaming the recognize input to a braille keyboard.
+//     *
+//     * @param view - onClickListener to any Recognize message from the chat
+//     */
+    /*public void updateCheckRead(View view) {
         View parentRow = (View) view.getParent();
         ListView listView = (ListView) parentRow.getParent();
         int position = listView.getPositionForView(parentRow);
@@ -520,10 +855,10 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
             // if the user done read at lease before the 3 fresh messages - enable speech recognition again
             this.doneReading = true;
             this.isListening = true;
-            this.recognizeSpeech = true; // do we want the user to fully control? currently the conversation is fluid
+            this.recognizeSpeech = true;
             startRecognition();
         }
-    }
+    }*/
 
     /**
      * onResume is part of the app life-cycle.
@@ -532,6 +867,7 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
      * <p>
      * This method covers Dark mode, app title, STT Language, TTS Language, Font size in chat
      * and many more User-Settings for the app features.
+     *
      */
     @Override
     protected void onResume() {
@@ -544,19 +880,33 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
             MainActivity.this.recreate();
         }
 
+        allow_to_promote = sharedPref.getBoolean("key_allow_promoting", true);
         allow_to_vibrate = sharedPref.getBoolean("key_vibrate", true);
         allow_to_speak = sharedPref.getBoolean("key_tts_enable", true);
         repeat_on_blank = sharedPref.getBoolean("key_repeat_enable", false);
         repeat_on_longpress = sharedPref.getBoolean("key_repeat_longpress", true);
         shortcut_template = sharedPref.getString("key_presave", "a");
         max_volume_enable = sharedPref.getBoolean("key_max_volume", true);
-        currentCity = sharedPref.getString("currentCity", "");
+        //currentCity = sharedPref.getString("currentCity", "");
         requestingLocationUpdates = sharedPref.getBoolean("requestingLocationUpdates", false);
+        fix_braille_hebrew = sharedPref.getBoolean("key_fix_hebrew_braille", false);
+        enable_auto_scroll = sharedPref.getBoolean("key_enable_auto_scroll", true);
+
+        fix_talkback = sharedPref.getBoolean("key_talkback", false);
+        if (mAudioManager!=null && fix_talkback) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mAudioManager.adjustStreamVolume(AudioManager.STREAM_ACCESSIBILITY, AudioManager.ADJUST_MUTE, 0);
+            } else {
+                mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+            }
+        }
+
         updateAppTitle(sharedPref.getString("key_myname", getString(R.string.app_name_title)));
         updateSTTLanguage(sharedPref.getString("key_language_stt", "en-US"));
         updateTTSLanguage(sharedPref.getString("key_language_tts", "en-US"));
         updateFontSize();
-        // settings opened = false
+        updateTrainModeButton(sharedPref.getBoolean("key_train_mode_enable", true));
+        updateTalkModeButton(sharedPref.getBoolean("key_talk_mode_enable", true));
         super.onResume();
     }
 
@@ -617,31 +967,152 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
                     }
                 }
             });
+
             tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                 @Override
                 public void onStart(String utteranceId) {
-                    if (allow_to_vibrate) {
-                        vibrator.vibrate(pattern_heart_beat, 0);
-                    }
-                    pulseView_sendMessage.startPulse();
-                }
+                    // User-settings : if max volume is enabled in app settings - speak with the max volume
+                    if (max_volume_enable){
+                        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                        am.setStreamVolume(AudioManager.STREAM_MUSIC,am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
 
+                        // User-settings : if fix talkback is on then we mute the music stream, need to unmute for TTS
+                        //&& Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                    } else if (fix_talkback){
+                        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
+                    }
+
+                    if (!promoting){
+                        if (allow_to_vibrate) {
+                            vibrator.vibrate(pattern_heart_beat, -1);
+                        }
+                        //pulseView_sendMessage.startPulse();
+                    }
+                }
                 @Override
                 public void onDone(String utteranceId) {
-                    // Speaking stopped.
-                    vibrator.cancel();
-                    if (isListening) {
-                        startRecognition();
+                    // User-settings : if fix talkback is on then we mute the music stream, need to unmute for TTS
+                    //&& Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                    if (fix_talkback){
+                        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
                     }
-                    pulseView_sendMessage.finishPulse();
-                }
 
+                    // if the current TTS was a promotion of starting STT
+                    if (promoting){
+                        startRecognitionPromote();
+                    }else{
+
+                        // we spoke the message and THEN send it to the UI chat message
+                        // && Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                        if (fix_talkback) {
+                            onMessage(utteranceId, 1);
+                        }
+
+                        // Speaking finished
+                        //pulseView_sendMessage.finishPulse();
+                        if (talk_mode){
+                            final String message_to_speak = getString(R.string.promot_stt); // ="Recording"
+                            promoting = true;
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                public void run() {
+                                    tts.speak(message_to_speak, TextToSpeech.QUEUE_FLUSH, null, message_to_speak);
+                                    Log.i(LOG_TAG, "spoke :" + message_to_speak);
+                                }
+                            }, promoting_delay);
+//                        isListening = true;
+//                        recognizeSpeech = true;
+//                        startRecognition();
+                        }
+                    }
+                }
+                @Override
+                public void onStop(String utteranceId, boolean interrupted) {
+                    // User-settings : if fix talkback is on then we mute the music stream, need to unmute for TTS
+                    // && Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                    if (fix_talkback){
+                        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+                        if (! promoting){
+                            // we spoke the message and THEN send it to the UI chat message
+                            onMessage(getString(R.string.stopped) + utteranceId, 1);
+                        }
+                    }
+
+                    // if the current TTS was a promotion of starting STT
+                    if (promoting){
+                        startRecognitionPromote();
+                    }else {
+                        // Speaking stopped from something unexpected
+                        vibrator.cancel();
+                        vibrator.vibrate(pattern_wrong, -1);
+                        pulseView_sendMessage.finishPulse();
+                        if (talk_mode) {
+                            final String message_to_speak = getString(R.string.promot_stt); // ="Recording"
+                            promoting = true;
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                public void run() {
+                                    tts.speak(message_to_speak, TextToSpeech.QUEUE_FLUSH, null, message_to_speak);
+                                    Log.i(LOG_TAG, "spoke :" + message_to_speak);
+                                }
+                            }, promoting_delay);
+//                        isListening = true;
+//                        recognizeSpeech = true;
+//                        startRecognition();
+                        }
+                    }
+                }
                 @Override
                 public void onError(String utteranceId) {
-                    Log.i(LOG_TAG, "onError: ");
-                    // Error section
+                    // User-settings : if fix talkback is on then we mute the music stream, need to unmute for TTS
+                    // && Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                    if (fix_talkback){
+                        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+                        if (! promoting){
+                            // we spoke the message and THEN send it to the UI chat message
+                            onMessage(getString(R.string.error), 1);
+                        }
+                    }
+
+                    Log.i(LOG_TAG, "onError TTS");
+                    vibrator.cancel();
+                    //pulseView_sendMessage.finishPulse();
                 }
             });
+        }
+    }
+
+    /**
+     * Control the action bar - detrmine if the Train Mode Button will appear or not
+     * @param newSetting new desire setting from the user
+     */
+    private void updateTrainModeButton(boolean newSetting){
+        if (newSetting != train_mode_visibility){
+            if (newSetting){
+                // make train mode button visible
+                pulseView_train.setVisibility(View.VISIBLE);
+            } else{
+                // make train mode button invisible
+                pulseView_train.finishPulse();
+                pulseView_train.setVisibility(View.GONE);
+            }
+            this.train_mode_visibility = newSetting;
+        }
+    }
+
+    /**
+     * Control the action bar - detrmine if the Train Mode Button will appear or not
+     * @param newSetting new desire setting from the user
+     */
+    private void updateTalkModeButton(boolean newSetting){
+        if (newSetting != talk_mode_visibility){
+            if (newSetting){
+                // make train mode button visible
+                pulseView_talk_mode.setVisibility(View.VISIBLE);
+            } else{
+                // make train mode button invisible
+                pulseView_talk_mode.finishPulse();
+                pulseView_talk_mode.setVisibility(View.GONE);
+            }
+            this.talk_mode_visibility = newSetting;
         }
     }
 
@@ -730,7 +1201,8 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
      * @param view - R.id = sendImageButton
      */
     public void sendMessage(View view) {
-        String message = myMessageText.getText().toString();
+        final String message = myMessageText.getText().toString();
+        hideKeyboard(mRelativeLayout);
         sendMessage(message);
     }
 
@@ -759,79 +1231,52 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
             }
         }
         speakMessage(message);
-//        if (message.length() == 0 || (mScs !=null && mScs.isSessionDisconnected())){
-//            speakMessage(message);
-//        } else {
-        // Check for spelling correction
-//            if (mScs != null) {
-//                mScs.getSentenceSuggestions(new TextInfo[]{new TextInfo(message)}, 5);
-//            } else {
-//                updateSpellChecker();
-//                if (mScs != null) {
-//                    mScs.getSentenceSuggestions(new TextInfo[]{new TextInfo(message)}, 5);
-//                } else {
-//                    // Show the message to user
-//                    Toast.makeText(this, "Please turn on the spell checker from setting", Toast.LENGTH_LONG).show();
-//                    // You can even open the settings page for user to turn it ON
-//                    ComponentName componentToLaunch = new ComponentName("com.android.settings",
-//                            "com.android.settings.Settings$SpellCheckersSettingsActivity");
-//                    Intent intent = new Intent();
-//                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
-//                    intent.setComponent(componentToLaunch);
-//                    try {
-//                        this.startActivity(intent);
-//                    } catch (ActivityNotFoundException e) {
-//                    }
-//                }
-//            }
-    //}
-//        // Add the message to the chat list-view
-//        if (message.length() > 0) {
-//            onMessage(message, 1);
-//            message_to_speak = message;
-//        }else if (repeat_on_blank){
-//            // the user pressed send on a blank message, repeat the prev message
-//            // need to be a setting !
-//            message_to_speak = messageAdapter.getLastUserMessage();
-//        }
-//
-//        // if allowed to TTS, speak the Text entered in chat
-//        if (allow_to_speak && message_to_speak.length() > 0){
-//            if (this.isListening){
-//                clear_speech_recognition = true;
-//                speechRecognizer.stopListening();
-//            }
-//            // Check if the language is unavailable
-//            final Locale new_locale = Locale.forLanguageTag(this.tts_language);
-//            if (tts.isLanguageAvailable(new_locale) < 0){
-//                vibrator.vibrate(pattern_wrong, -1);
-//                TTSPopUpWindows();
-//            } else {
-//                // User-settings : if max volume is enabled in app settings - speak with the max volume
-//                if (max_volume_enable){
-//                    AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-//                    am.setStreamVolume(AudioManager.STREAM_MUSIC,am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
-//                }
-//                tts.speak(message_to_speak, TextToSpeech.QUEUE_FLUSH, null, message_to_speak);
-//                Log.i(LOG_TAG, "spoke :" + message_to_speak);
-//            }
-//        }
-//        myMessageText.getText().clear();
     }
 
+    /**
+     * speakMessage
+     * This method is the main function for represent the User text (on-display keyboard or braille keyboard).
+     * in the conversation flow.
+     * <p>
+     * Supports pre-saved sentences activated with the shortcut template set in User-Settings.
+     * Supports repeat the last message when the user send an empty message
+     * Supports adjusting the output volume for TTS according to the User-Settings.
+     * <p>
+     * If the current chosen TTS language is unavailable a POP-UP message will appear on
+     * screen with solutions.
+     *
+     * @param message - the message to be spoken
+     */
     public void speakMessage(String message){
         String message_to_speak = "";
 
         // Add the message to the chat list-view
         if (message.length() > 0) {
-            onMessage(message, 1);
+            // if we are in fix talk back we first send to TTS THEN make send the message to UI
+            if (!this.fix_talkback){
+                onMessage(message, 1);
+            }
             message_to_speak = message;
         }else if (repeat_on_blank){
             // the user pressed send on a blank message, repeat the prev message
-            // need to be a setting !
             message_to_speak = messageAdapter.getLastUserMessage();
         }
 
+        speakTTSmessage(message_to_speak);
+
+        myMessageText.getText().clear();
+    }
+
+    /**
+     * speakTTSmessage
+     * send the directly TTS engine a message to be spoken
+     * If the current chosen TTS language is unavailable a POP-UP message will appear on
+     * screen with solutions.
+     *
+     * @param message_to_speak - the message to be spoken
+
+     */
+    public void speakTTSmessage(String message_to_speak){
         // if allowed to TTS, speak the Text entered in chat
         if (allow_to_speak && message_to_speak.length() > 0){
             if (this.isListening){
@@ -842,50 +1287,17 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
             final Locale new_locale = Locale.forLanguageTag(this.tts_language);
             if (tts.isLanguageAvailable(new_locale) < 0){
                 vibrator.vibrate(pattern_wrong, -1);
-                TTSPopUpWindows();
-            } else {
-                // User-settings : if max volume is enabled in app settings - speak with the max volume
-                if (max_volume_enable){
-                    AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                    am.setStreamVolume(AudioManager.STREAM_MUSIC,am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
+                if (this.isDeviceTalkBackON){
+                    onMessage(getString(R.string.system_missing_language),4);
+                }else{
+                    TTSPopUpWindows();
                 }
+            } else {
+                this.promoting = false;
                 tts.speak(message_to_speak, TextToSpeech.QUEUE_FLUSH, null, message_to_speak);
                 Log.i(LOG_TAG, "spoke :" + message_to_speak);
             }
         }
-        myMessageText.getText().clear();
-    }
-
-    private void updateSpellChecker(){
-        // Message spelling correction init
-        final TextServicesManager tsm = (TextServicesManager)
-                getSystemService(Context.TEXT_SERVICES_MANAGER_SERVICE);
-        this.mScs = tsm.newSpellCheckerSession(null,Locale.ENGLISH, this, false);
-//        mScs = tsm.newSpellCheckerSession(null, Locale.ENGLISH,
-//                new SpellCheckerSession.SpellCheckerSessionListener() {
-//            @Override
-//            public void onGetSuggestions(SuggestionsInfo[] results) {
-//            }
-//
-//            @Override
-//            public void onGetSentenceSuggestions(final SentenceSuggestionsInfo[] results) {
-//                final StringBuilder sb = new StringBuilder();
-//                for(SentenceSuggestionsInfo result:results){
-//                    int n = result.getSuggestionsCount();
-//                    for(int i=0; i < n; i++){
-//                        int m = result.getSuggestionsInfoAt(i).getSuggestionsCount();
-//
-//                        for(int k=0; k < m; k++) {
-//                            sb.append(result.getSuggestionsInfoAt(i).getSuggestionAt(k))
-//                                    .append("\n");
-//                        }
-//                        sb.append("\n");
-//                    }
-//                }
-//                // speak the message after correction
-//                speakMessage(sb.toString());
-//            }
-//        }, true);
     }
 
     /**
@@ -905,13 +1317,20 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
      */
     public void onMessage(String InputMessage, Integer userID) {
         boolean belongsToCurrentUser = (userID == 1); // userID=1 is us, userID=2 is recognition
+        this.messageFromSTT.set(!belongsToCurrentUser);
         MemberData data2Pass;
         // this is a message from train mode service
-        if (userID == 3){
-            data2Pass = new MemberData("TrainMode");
-        } else{
-            data2Pass = data;
+        switch(userID) {
+            case 3:
+                data2Pass = new MemberData("TrainMode");
+                break;
+            case 4:
+                data2Pass = new MemberData("System");
+                break;
+            default:
+                data2Pass = data;
         }
+
         final CustomMessage customMessage = new CustomMessage(InputMessage, data2Pass, belongsToCurrentUser, false);
 
         runOnUiThread(new Runnable() {
@@ -921,9 +1340,102 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
                 messageAdapter.add(customMessage);
 
                 // scroll the ListView to the last added element
-                messagesView.setSelection(messagesView.getCount() - 1);
+                //messagesView.setSelection(messagesView.getCount() - 1);
+
+                // vibrate on new message
+                if(messageFromSTT.get() && allow_to_vibrate){
+                    vibrator.vibrate(pattern_new_message,-1);
+                }
+
+                if(isDeviceTalkBackON && messageFromSTT.get()) {
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Log.i("ENTER_HANDLER", customMessage.getText());
+                            int index = messagesView.getCount() - 1;
+                            final View lastMessage = messagesView.getChildAt(messagesView.getCount() - 1);
+
+                            if (lastMessage != null && enable_auto_scroll) {
+                                messagesView.setSelection(messagesView.getCount() - 1);
+                                boolean request1 = lastMessage.requestFocus();
+                                Log.i("hasFocusedRegular", "run: " + request1 + " " + index);
+                                //Log.i("hasFocusedRegular", "run: " + " " + index);
+                                //lastMessage.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+                            } else{
+                                Log.i("LASTMESSAGE", "was null");
+                                for(int i=0; i < messagesView.getCount(); i++){
+                                    View lastmessage = messagesView.getChildAt(i);
+                                    if (lastmessage!=null && enable_auto_scroll){
+                                        TextView text = lastmessage.findViewById(R.id.message_body);
+                                        if (text.getText().toString().equals(customMessage.getText())){
+                                            messagesView.setSelection(messagesView.getCount() - 1);
+                                            boolean request1 = lastmessage.requestFocus();
+                                            Log.i("hasFocused", "run: " + request1 + " " + index);
+                                            //lastmessage.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }, 500);
+                }
             }
         });
+
+        // we want to gain focus on new SST message
+        // There is no method to listen for new view added on ListView, we tried scroll listener, LayoutChangeListener etc
+        // This seems to be the simplest solution
+//        if(isDeviceTalkBackON && messageFromSTT.get()) {
+//
+//            final Handler handler = new Handler();
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    int index = messagesView.getCount() - 1;
+//                    final View lastMessage = messagesView.getChildAt(messagesView.getCount() - 1);
+//                    if (lastMessage != null) {
+//                            //handler.postDelayed(this, 1000);
+//                        messagesView.setSelection(messagesView.getCount() - 1);
+//                        boolean request1 = lastMessage.requestFocus();
+//                        Log.i("hasFocused", "run: " + request1 +" " + index);
+//                        lastMessage.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+//                    }
+//                }
+//            }, 500);
+//
+////            messagesView.post(new Runnable() {
+////                @Override
+////                public void run() {
+////                    // Select the last row so it will scroll into view...
+////                    final View lastMessage = messagesView.getChildAt(messagesView.getCount() - 1);
+////                    if (lastMessage != null) {
+////                        View parentRow = (View) lastMessage.getParent();
+////                        ListView listView = (ListView) parentRow.getParent();
+////                        int position = listView.getPositionForView(parentRow);
+////                        if (position != messageAdapter.getCount()){
+////
+////                        }
+////
+////                        lastMessage.post(new Runnable() {
+////                            @Override
+////                            public void run() {
+////                                final Handler handler = new Handler();
+////                                handler.postDelayed(new Runnable() {
+////                                    @Override
+////                                    public void run() {
+////                                        messagesView.setSelection(messagesView.getCount() - 1);
+////                                        boolean request1 = lastMessage.requestFocus();
+////                                        lastMessage.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+////                                    }
+////                                }, 200);
+////                            }
+////                        });
+////                    }
+////                }
+////            });
+//        }
     }
 
     /**
@@ -950,7 +1462,7 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
 
         if (current_font_size != new_font_size || new_enable_bold != enable_bold) {
             current_font_size = new_font_size;
-            chat_messages_limit = 50 - current_font_size * 0.3;
+            //chat_messages_limit = 50 - current_font_size * 0.3;
 
             // limit the message view
             if (messageAdapter.getCount() > chat_messages_limit){
@@ -959,10 +1471,10 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
 
             if (current_font_size > 100){
                 myMessageText.setHint("");
-                now_invisible = true;
-            }else if (now_invisible){
+                inputHintInvisible = true;
+            }else if (inputHintInvisible){
                 myMessageText.setHint(R.string.my_message_hint);
-                now_invisible = false;
+                inputHintInvisible = false;
             }
             SharedPreferences.Editor prefEditor = sharedPref.edit();
             prefEditor.putInt("font_size", current_font_size);
@@ -988,12 +1500,6 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
         }
     }
 
-    public void introduction_speech(){
-        // incomplete function
-        String message_to_speak = "m";
-        tts.speak(message_to_speak, TextToSpeech.QUEUE_FLUSH, null, message_to_speak);
-    }
-
     /**
      * offlinePopUpWindows
      * Pop-up a window that notify the user that the device is not connected to an
@@ -1003,24 +1509,25 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
      * A direct solution to the problem will be available in this pop-up window.
      */
     public void offlinePopUpWindows() {
+        hideKeyboard(mRelativeLayout);
+
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_window_stt, null);
-        hideKeyboard(mRelativeLayout);
+        final View popupView = inflater.inflate(R.layout.popup_window_stt, null);
 
         // create the popup window
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // focusable - lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width,  mRelativeLayout_height - 140, false);
 
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window token
-        popupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER, 0, 0);
+        popupWindow.showAtLocation(mRelativeLayout, Gravity.BOTTOM, 0, 0);
 
         // Get a reference for the custom view close button
-        View closeButton = popupView.findViewById(R.id.popup_btn_close);
+        final View closeButton = popupView.findViewById(R.id.popup_btn_close);
 
         // Set a click listener for the popup window close button
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -1064,13 +1571,13 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
 
         // create the popup window
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // focusable - lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, this.mRelativeLayout_height - 40, false);
 
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window token
-        popupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER, 0, 0);
+        popupWindow.showAtLocation(mRelativeLayout, Gravity.BOTTOM, 0, 0);
 
         // Get a reference for the custom view close button
         View closeButton = popupView.findViewById(R.id.popup_btn_close_TTS);
@@ -1135,13 +1642,13 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
 
         // create the popup window
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        //focusable - lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width,  this.mRelativeLayout_height - 40, false);
 
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window token
-        popupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER, 0, 0);
+        popupWindow.showAtLocation(mRelativeLayout, Gravity.BOTTOM, 0, 0);
 
         // Get a reference for the custom view close button
         View closeButton = popupView.findViewById(R.id.popup_btn_close_train_mode);
@@ -1199,15 +1706,21 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
 
         if (this.train_mode_status){ // turn train mode on
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                this.train_mode_status = !this.train_mode_status;
                 ActivityCompat.requestPermissions(this,
                         new String[] { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION },
                         REQUEST_LOCATION_PERMISSION_CODE);
-                // train mode will be activated when the user gave permission in on onRequestPermissionsResult method
+                // train mode will be activated when the user give permission in on onRequestPermissionsResult method
                 return;
             }
             if (!isLocationServiceAvailable() && !isNetworkAvailable()){
+                this.train_mode_status = !this.train_mode_status;
                 vibrator.vibrate(pattern_wrong,-1);
-                trainModePopUpWindows();
+                if (this.isDeviceTalkBackON){
+                    onMessage(getString(R.string.system_train_mode),4);
+                }else{
+                    trainModePopUpWindows();
+                }
                 return;
             }
             this.requestingLocationUpdates = true;
@@ -1216,13 +1729,15 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
             startService(startIntent);
             pulseView_train.setIconRes(R.drawable.ic_train_on);
             pulseView_train.startPulse();
+            pulseView_train.setContentDescription(getString(R.string.train_mode_off));
 
-       }else{ // turn train mode off
+        }else{ // turn train mode off
             this.requestingLocationUpdates = false;
             Intent stopIntent = new Intent(MainActivity.this, myServiceTrainMode.class);
             stopService(stopIntent);
             pulseView_train.setIconRes(R.drawable.ic_train);
             pulseView_train.finishPulse();
+            pulseView_train.setContentDescription(getString(R.string.train_mode_on));
         }
         SharedPreferences.Editor prefEditor = sharedPref.edit();
         prefEditor.putBoolean("requestingLocationUpdates",this.requestingLocationUpdates);
@@ -1244,6 +1759,13 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
             case REQUEST_LOCATION_PERMISSION_CODE:
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (!isLocationServiceAvailable() && !isNetworkAvailable()){
+                        vibrator.vibrate(pattern_wrong,-1);
+                        trainModePopUpWindows();
+                        return;
+                    }
+                    // train_mode_status = false before requesting permission, so now its true
+                    this.train_mode_status = !this.train_mode_status;
                     this.requestingLocationUpdates = true;
                     //startLocationUpdates();
                     Intent startIntent = new Intent(MainActivity.this, myServiceTrainMode.class);
@@ -1275,30 +1797,5 @@ public class MainActivity extends AppCompatActivity implements SpellCheckerSessi
             default:
                 break;
         }
-    }
-
-
-    @Override
-    public void onGetSuggestions(SuggestionsInfo[] results) {
-
-    }
-
-    @Override
-    public void onGetSentenceSuggestions(SentenceSuggestionsInfo[] results) {
-        final StringBuilder sb = new StringBuilder();
-        for(SentenceSuggestionsInfo result:results){
-            int n = result.getSuggestionsCount();
-            for(int i=0; i < n; i++){
-                int m = result.getSuggestionsInfoAt(i).getSuggestionsCount();
-
-                for(int k=0; k < m; k++) {
-                    sb.append(result.getSuggestionsInfoAt(i).getSuggestionAt(k))
-                            .append("\n");
-                }
-                sb.append("\n");
-            }
-        }
-        // speak the message after correction
-        speakMessage(sb.toString());
     }
 }

@@ -5,26 +5,25 @@
     android:layout_height="40dp">
 
     <LinearLayout
+        android:id="@+id/pv_train_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:layout_toStartOf="@id/settingDotsImage">
+        android:layout_toStartOf="@id/pv_talk_mode_layout">
 
         <com.gigamole.library.PulseView
             android:id="@+id/pv_train"
             android:layout_width="60dp"
             android:layout_height="50dp"
-            android:layout_marginEnd="5dp"
-            android:contentDescription="@string/train_mode"
+            android:contentDescription="@string/train_mode_on"
             app:pv_alpha="60"
             app:pv_color="?colorPulseView"
             app:pv_count="2"
             app:pv_icon="@drawable/ic_train"
-            app:pv_icon_height="35dp"
-            app:pv_icon_width="35dp"
+            app:pv_icon_height="33dp"
+            app:pv_icon_width="33dp"
             app:pv_interpolator="@android:anim/linear_interpolator"
             app:pv_measure="width"
-            app:pv_spawn_period="1000" />
+            app:pv_spawn_period="1500" />
     </LinearLayout>
 
     <ImageButton
@@ -37,6 +36,30 @@
         android:onClick="startSettingActivity"
         android:scaleType="fitCenter"
         android:background="@drawable/setting_icon" />
+
+    <LinearLayout
+        android:id="@+id/pv_talk_mode_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/settingDotsImage"
+        android:layout_marginEnd="10dp">
+
+        <com.gigamole.library.PulseView
+            android:id="@+id/pv_talk_mode"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/title_talk_mode_btn_on"
+            app:pv_alpha="60"
+            app:pv_color="?colorPulseView"
+            app:pv_count="2"
+            app:pv_icon="@drawable/ic_talk_mode_on"
+            app:pv_icon_height="33dp"
+            app:pv_icon_width="33dp"
+            app:pv_interpolator="@android:anim/linear_interpolator"
+            app:pv_measure="width"
+            app:pv_spawn_period="1500" />
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/HawkingLogoText"

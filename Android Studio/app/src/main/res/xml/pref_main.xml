@@ -40,6 +40,26 @@
                 android:title="@string/pref_title_dark_mode"
                 android:icon="@drawable/ic_dark_mode"/>
 
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_train_mode_enable"
+                android:summary="@string/summary_train_mode_enable"
+                android:title="@string/title_train_mode_enable"
+                android:icon="@drawable/ic_train"/>
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_talk_mode_enable"
+                android:summary="@string/summary_talk_mode_enable"
+                android:title="@string/title_talk_mode_enable"
+                android:icon="@drawable/ic_talk_mode"/>
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_allow_promoting"
+                android:summary="@string/summary_stt_promoting"
+                android:title="@string/title_stt_promoting"
+                android:icon="@drawable/ic_allow_promoting"/>
 
             <Preference
                 android:title="@string/pref_title_fontsize"
@@ -59,19 +79,6 @@
         </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_title_stt">
-            <SwitchPreference
-                android:defaultValue="true"
-                android:key="@string/key_stt_enable"
-                android:summary="@string/summary_stt_enable"
-                android:title="@string/title_stt_enable"
-                android:icon="@drawable/ic_stt"/>
-
-            <SwitchPreference
-                android:defaultValue="true"
-                android:key="@string/key_read_block"
-                android:summary="@string/summary_read_block"
-                android:title="@string/title_read_block"
-                android:icon="@drawable/ic_read_block"/>
 
             <ListPreference
                 android:key="@string/key_language_stt"
@@ -89,7 +96,14 @@
                 android:summary="@string/summary_settings_link_stt"
                 android:icon="@drawable/link_icon" />
 
-        </PreferenceCategory>
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_enable_auto_scroll"
+                android:summary="@string/summary_enable_auto_scroll"
+                android:title="@string/title_enable_auto_scroll"
+                android:icon="@drawable/ic_auto_scroll"/>
+
+    </PreferenceCategory>
 
         <PreferenceCategory android:title="@string/pref_title_tts">
             <SwitchPreference
@@ -148,6 +162,21 @@
                 android:title="@string/title_settings_link_tts"
                 android:summary="@string/summary_settings_link_tts"
                 android:icon="@drawable/link_icon" />
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_talkback"
+                android:summary="@string/summary_talkback"
+                android:title="@string/pref_title_talkback"
+                android:icon="@drawable/ic_talkback"/>
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="@string/key_fix_hebrew_braille"
+                android:summary="@string/summary_fix_hebrew_braille"
+                android:title="@string/pref_title_fix_hebrew_braille"
+                android:icon="@drawable/ic_fix_hebrew_braille"/>
+
         </PreferenceCategory>
 
         <PreferenceCategory android:title="@string/pref_header_about">
@@ -165,6 +194,18 @@
                 android:title="@string/title_send_feedback" />
 
             <!-- preference opens url in browser -->
+            <Preference android:title="@string/user_guide_eng">
+                <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="@string/url_eng_guide" />
+            </Preference>
+
+            <Preference android:title="@string/user_guide_heb">
+                <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="@string/url_heb_guide" />
+            </Preference>
+
             <Preference
                 android:summary="@string/summary_faq"
                 android:title="@string/title_faq">
