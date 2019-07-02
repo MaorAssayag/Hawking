@@ -12,7 +12,15 @@ The application can perform Speech-to-Braille and Braille-to-Speech operations i
 This project is part of a final computer engineering project in Ben-gurion university Israel,
 in collaboration with the deaf-blind center in Israel.  
 
-**The project was chosen to represent the Department of Electrical and Computer Engineering on the day of presentation of the final projects**, and was also awarded one of the "The audience's favorite projects".
+**The project was chosen to represent the Department of Electrical and Computer Engineering on the day of presentation of the final projects**, and was also awarded one of the "The audience's favorite projects".  
+</br>
+
+### Press Coverage
+Ben Gurion University in Israel Newsletter, Volume 120, July 2019
+https://bgu.digitaler.co.il/BenGuryon120/6/
+
+Ben Gurion University Website, Engineering Projects Conference 2019
+https://in.bgu.ac.il/engn-projects/Pages/blind-deaf-comm.aspx
      
 #
 #
@@ -40,14 +48,14 @@ Initial tests were performed with the deaf-blind community and the feedback were
 
 ##### User Guide in <a href="https://docs.wixstatic.com/ugd/ad58f8_9534e1c7ff81401185ae0dcac1d3794d.pdf?index=true">Hebrew</a>  
 
-##### Offical website of the product    
 <a href="https://hawkingbgu.wixsite.com/application"><img src="https://weglot.com/wp-content/uploads/20190415174645/wix-logo2-1024x398.png" width="80"></a>     
-  
-##### Official Google Play Page    
+##### Offical website of the product    
+ 
 <a href="https://play.google.com/store/apps/details?id=optimisticapps.Hawking"><img src="https://www.potomacofficersclub.com/assets/images/get-on-google-play.png" width="160"></a>     
-  
-##### Demo videos in Youtube      
+##### Official Google Play Page 
+
 <a href="https://www.youtube.com/channel/UCQ4F92f5KuSfIVwLLH8fPHA?view_as=subscriber"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/1280px-Logo_of_YouTube_%282015-2017%29.svg.png" width="100"></a>  
+##### Demo videos in Youtube      
 #
 #
   
