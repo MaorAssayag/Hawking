@@ -49,7 +49,7 @@ Initial tests were performed with the deaf-blind community and the feedback were
 ##### User Guide in <a href="https://docs.wixstatic.com/ugd/ad58f8_9534e1c7ff81401185ae0dcac1d3794d.pdf?index=true">Hebrew</a>  
 
 ##### Programmer Guide in <a href="https://github.com/MaorAssayag/Hawking/blob/master/Programmer%20Guide%20in%20Hebrew.pdf">Hebrew</a>
-###### Note : this file containes parts that are censored, if you wish to have full access please conact our mail - hawkingbgu@gmail.com
+###### Note : this file contains parts that are censored, if you wish to have full access please contact us at hawkingbgu@gmail.com
 </br> </br> 
 
 
