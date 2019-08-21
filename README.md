@@ -12,7 +12,7 @@ The application can perform Speech-to-Braille and Braille-to-Speech operations i
 This project is part of a final computer engineering project in Ben-gurion university Israel,
 in collaboration with the deaf-blind center in Israel.  
 
-**The project was chosen to represent the Department of Electrical and Computer Engineering on the day of presentation of the final projects**, and was also awarded one of the "The audience's favorite projects".  
+**This project was chosen to represent the Department of Electrical and Computer Engineering on the day of presentation of the final projects**, and was also awarded one of the "The audience's favorite projects".  
 </br></br> 
 
 ### Press Coverage
