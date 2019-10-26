@@ -5,7 +5,7 @@
 ## A real-time communication system for deaf and blind people
 
 ### Short description
-Hawking was created to enable deaf-blind people to coomunicate verbally with any person.  
+Hawking was created to enable deaf-blind people to communicate verbally with any person.  
 
 The application can perform Speech-to-Braille and Braille-to-Speech operations in Hebrew & English with appropriate accessibility indicators so that the conversation is well executed and continuous for both the speaker and the deaf-blind person.  
 
